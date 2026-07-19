@@ -1,0 +1,72 @@
+================================================================
+  Spring Boot 学习笔记 #01 — 项目起步 & Hello World
+  日期：2026-06-06
+================================================================
+
+一、环境信息
+----------------------------------------------------------------
+  Java：   25.0.1 LTS (C:\Program Files\Java\jdk-25)
+  构建工具：Maven Wrapper (mvnw)，不需要全局安装 Maven
+  IDE：    IntelliJ IDEA Community Edition 2025.2.4
+  框架：   Spring Boot 3.5.0
+
+二、项目结构（约定优于配置）
+----------------------------------------------------------------
+  hello-spring/
+  ├── pom.xml                          ← Maven 配置，依赖放这里
+  ├── mvnw / mvnw.cmd                  ← Maven Wrapper，不用装 Maven
+  └── src/main/
+      ├── java/com/example/
+      │   ├── HelloSpringApplication.java   ← 入口类（启动整个应用）
+      │   └── controller/
+      │       └── HelloController.java      ← REST 接口（处理 HTTP 请求）
+      └── resources/
+          └── application.properties        ← 配置文件（端口、数据库等）
+
+三、核心概念速查
+----------------------------------------------------------------
+
+  概念              | 代码                                      | 干什么的
+  ------------------|-------------------------------------------|------------------------------
+  Starter 全家桶     | spring-boot-starter-web                  | 一个依赖带进来 Web 开发全部东西
+  自动配置           | @SpringBootApplication                   | 三个注解合体，Spring Boot 核心魔法
+  REST 控制器        | @RestController                          | 方法返回值直接写入 HTTP 响应体
+  路由映射           | @GetMapping("/hello")                    | 把 GET 请求绑定到方法上
+  参数绑定           | @RequestParam(defaultValue = "World")    | URL 参数自动注入，可设默认值
+  外部化配置         | server.port=8081                         | 不改代码就能换端口
+
+四、接口测试结果
+----------------------------------------------------------------
+  GET /hello              →  "Hello, Spring Boot! 🚀"
+  GET /greet              →  "你好, World!"          （默认值生效）
+  GET /greet?name=准大二   →  "你好, 准大二!"          （参数注入）
+
+五、常用命令
+----------------------------------------------------------------
+  # 编译（-q 静默模式，只看错误）
+  ./mvnw compile -q
+
+  # 启动应用
+  ./mvnw spring-boot:run
+
+  # 测试接口
+  curl http://localhost:8081/hello
+  curl http://localhost:8081/greet?name=你的名字
+
+  # 注意：中文参数需要 URL 编码，否则浏览器/curl 可能报 400
+  curl "http://localhost:8081/greet?name=%E5%87%86%E5%A4%A7%E4%BA%8C"
+
+六、踩过的坑
+----------------------------------------------------------------
+  1. JAVA_HOME 要指向 JDK 目录（C:\Program Files\Java\jdk-25），不是 JRE
+  2. 端口 8080 经常被占，application.properties 改成 8081 即可
+  3. 8080 端口冲突的话也可以用 netstat -ano | grep ":8080" 查是谁在用
+
+七、关键理解
+----------------------------------------------------------------
+  Spring Boot 做的事情本质上是：
+    你写业务代码 → Spring Boot 自动配置 → 内嵌 Tomcat 启动 → 对外提供 HTTP 服务
+
+  和传统 Java Web 开发的区别：
+    以前：装 Tomcat → 打 WAR 包 → 部署到 Tomcat → 启动
+    现在：一个 main() 方法全搞定，Tomcat 内嵌在 jar 包里面
