@@ -69,6 +69,7 @@ async function apiFetch(path) {
 async function checkHealth() {
   const indicator = document.getElementById('server-indicator');
   const text = document.getElementById('server-status-text');
+  if (!indicator || !text) return;
   const data = await apiFetch('/health');
 
   if (data && data.status === 'UP') {
@@ -85,6 +86,7 @@ async function checkHealth() {
 async function fetchInfo() {
   const cpuEl = document.getElementById('cpu-value');
   const memEl = document.getElementById('mem-value');
+  if (!cpuEl || !memEl) return;
   const data = await apiFetch('/info');
 
   if (data) {
@@ -127,7 +129,6 @@ function renderProjects(projects, containerId) {
 
 async function fetchProjects() {
   const data = await apiFetch('/projects');
-  const projects = (data && data.length > 0) ? data : PLACEHOLDER_PROJECTS;
 
   // 将后端项目转换为前端格式（如果后端返回了数据）
   const formatted = data
@@ -201,6 +202,7 @@ function renderApiStatus() {
 
 async function checkApiEndpoints() {
   const endpoints = ['/health', '/info', '/projects'];
+  let connectedCount = 0;
   for (const ep of endpoints) {
     const badgeId = `badge-${ep.replace(/\//g, '-').slice(1)}`;
     const badge = document.getElementById(badgeId);
@@ -209,9 +211,25 @@ async function checkApiEndpoints() {
     if (data) {
       badge.textContent = '已连接';
       badge.className = 'api-status-badge online';
+      connectedCount++;
     } else {
       badge.textContent = '未连接';
       badge.className = 'api-status-badge offline';
+    }
+  }
+  // 更新概览区 API 状态卡片
+  const apiIndicator = document.getElementById('api-indicator');
+  const apiStatusText = document.getElementById('api-status-text');
+  if (apiIndicator && apiStatusText) {
+    if (connectedCount === endpoints.length) {
+      apiIndicator.className = 'status-indicator online';
+      apiStatusText.textContent = `${connectedCount} 个接口在线`;
+    } else if (connectedCount > 0) {
+      apiIndicator.className = 'status-indicator developing';
+      apiStatusText.textContent = `${connectedCount}/${endpoints.length} 在线`;
+    } else {
+      apiIndicator.className = 'status-indicator offline';
+      apiStatusText.textContent = '未连接';
     }
   }
 }
