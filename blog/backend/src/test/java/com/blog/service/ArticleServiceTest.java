@@ -67,4 +67,18 @@ public class ArticleServiceTest {
         int count = articleService.getArticleCount();
         assertEquals(5, count, "种子数据应包含 5 篇文章");
     }
+
+    @Test
+    void shouldIncrementViewCount() {
+        // Get initial view count of article 1
+        Article before = articleService.findById(1L).orElseThrow();
+        int initial = before.getViewCount();
+
+        // Increment
+        articleService.incrementViewCount(1L);
+
+        // Verify it increased
+        Article after = articleService.findById(1L).orElseThrow();
+        assertEquals(initial + 1, after.getViewCount());
+    }
 }
