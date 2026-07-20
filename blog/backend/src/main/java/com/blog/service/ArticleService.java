@@ -45,7 +45,7 @@ public class ArticleService {
         String sql = """
             SELECT id, title, summary, content, cover_image,
                    view_count, created_at, updated_at
-            FROM articles ORDER BY RANDOM() LIMIT 1
+            FROM articles ORDER BY RAND() LIMIT 1
             """;
         List<Article> results = jdbc.query(sql, new ArticleRowMapper());
         return results.isEmpty() ? null : results.get(0);

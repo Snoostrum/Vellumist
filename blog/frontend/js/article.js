@@ -37,7 +37,10 @@ function loadArticle(id) {
 
 function simpleMarkdown(md) {
     if (!md) return '';
-    return md
+    // 1. Escape HTML first to prevent XSS
+    let html = escapeHtml(md);
+    // 2. Convert markdown patterns to HTML tags
+    html = html
         // 代码块 (```...```)
         .replace(/```(\w*)\n([\s\S]*?)```/g, '<pre><code>$2</code></pre>')
         // 行内代码 (`...`)
@@ -49,4 +52,6 @@ function simpleMarkdown(md) {
         .replace(/\n\n/g, '</p><p>')
         // 单换行 → <br>
         .replace(/\n/g, '<br>');
+    html = '<p>' + html + '</p>';
+    return html;
 }

@@ -34,3 +34,11 @@ function fetchMusicRecommendations() {
 function fetchSiteStats() {
     return fetchJSON(`${API_BASE}/site-stats`);
 }
+
+function escapeHtml(str) {
+    if (!str) return '';
+    const div = document.createElement('div');
+    div.textContent = str;
+    return div.innerHTML;
+}
+
