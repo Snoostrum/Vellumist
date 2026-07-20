@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Server Dashboard</title>
+    <link rel="stylesheet" href="css/dashboard.css" />
+  </head>
+  <body>
+    <!-- 侧边栏 -->
+    <aside id="sidebar">
+      <div class="sidebar-header">
+        <h1 class="logo">写的啥啊</h1>
+        <p class="subtitle">Snoostrum's Server</p>
+      </div>
+      <nav class="sidebar-nav">
+        <button class="nav-item active" data-section="overview">
+          <span class="nav-icon">/</span>
+          <span class="nav-label">概览</span>
+        </button>
+        <button class="nav-item" data-section="projects">
+          <span class="nav-icon">/</span>
+          <span class="nav-label">项目</span>
+        </button>
+        <button class="nav-item" data-section="skills">
+          <span class="nav-icon">/</span>
+          <span class="nav-label">Tag</span>
+        </button>
+        <button class="nav-item" data-section="apistatus">
+          <span class="nav-icon">/</span>
+          <span class="nav-label">API 状态</span>
+        </button>
+      </nav>
+      <div class="sidebar-footer">
+        <p>&copy; 2026 Snoostrum</p>
+      </div>
+    </aside>
+
+    <!-- 主内容区 -->
+    <main id="main-content">
+      <!-- 概览 Section -->
+      <section id="section-overview" class="content-section active">
+        <!-- 状态卡片行 -->
+        <div class="status-cards">
+          <div class="card status-card" id="card-server-status">
+            <div class="card-header">
+              <span class="card-icon">/</span>
+              <span class="card-title">服务器状态</span>
+            </div>
+            <div class="card-body">
+              <span
+                class="status-indicator offline"
+                id="server-indicator"
+              ></span>
+              <span class="status-text" id="server-status-text">离线</span>
+            </div>
+          </div>
+
+          <div class="card status-card" id="card-api-status">
+            <div class="card-header">
+              <span class="card-icon">/</span>
+              <span class="card-title">API 接口</span>
+            </div>
+            <div class="card-body">
+              <span
+                class="status-indicator developing"
+                id="api-indicator"
+              ></span>
+              <span class="status-text" id="api-status-text">开发中</span>
+            </div>
+          </div>
+
+          <div class="card" id="card-resources">
+            <div class="card-header">
+              <span class="card-icon">/</span>
+              <span class="card-title">系统</span>
+            </div>
+            <div class="card-body">
+              <div class="resource-item">
+                <span class="resource-label">CPU</span>
+                <span class="resource-value" id="cpu-value">--</span>
+              </div>
+              <div class="resource-item">
+                <span class="resource-label">内存</span>
+                <span class="resource-value" id="mem-value">--</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 项目列表 -->
+        <div class="card">
+          <div class="card-header">
+            <span class="card-icon">🤣</span>
+            <span class="card-title">其实还没有项目</span>
+          </div>
+          <div class="card-body" id="project-list">
+            <!-- JS 动态填充 -->
+          </div>
+        </div>
+
+        <!-- 技能标签 -->
+        <div class="card">
+          <div class="card-header">
+            <span class="card-icon">/</span>
+            <span class="card-title">技术栈</span>
+          </div>
+          <div class="card-body" id="skill-cloud">
+            <!-- JS 动态填充 -->
+          </div>
+        </div>
+      </section>
+
+      <!-- 项目 Section -->
+      <section id="section-projects" class="content-section">
+        <div class="card">
+          <div class="card-header">
+            <span class="card-icon">😡</span>
+            <span class="card-title">你看你（）</span>
+          </div>
+          <div class="card-body" id="project-list-full">
+            <!-- JS 动态填充 -->
+          </div>
+        </div>
+      </section>
+
+      <!-- 技能 Section -->
+      <section id="section-skills" class="content-section">
+        <div class="card">
+          <div class="card-header">
+            <span class="card-icon">/</span>
+            <span class="card-title">技能标签</span>
+          </div>
+          <div class="card-body" id="skill-cloud-full">
+            <!-- JS 动态填充 -->
+          </div>
+        </div>
+      </section>
+
+      <!-- API 状态 Section -->
+      <section id="section-apistatus" class="content-section">
+        <div class="card">
+          <div class="card-header">
+            <span class="card-icon">/</span>
+            <span class="card-title">API 接口状态</span>
+          </div>
+          <div class="card-body" id="api-detail">
+            <!-- JS 动态填充 -->
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <script src="js/dashboard.js"></script>
+  </body>
+</html>
