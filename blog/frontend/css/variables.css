@@ -1,0 +1,34 @@
+:root {
+    /* 主色 */
+    --color-bg:        #000000;
+    --color-text:      #FFFFFF;
+    --color-accent:    #abbbf3;
+    --color-muted:     #747474;
+
+    /* 衍生 */
+    --color-card:      rgba(255, 255, 255, 0.05);
+    --color-card-hover:rgba(255, 255, 255, 0.10);
+    --color-border:    rgba(255, 255, 255, 0.08);
+    --color-sidebar:   rgba(255, 255, 255, 0.03);
+
+    /* 排版 */
+    --font-sans: system-ui, -apple-system, 'Segoe UI', sans-serif;
+    --font-mono: 'Consolas', 'Monaco', monospace;
+
+    /* 间距 */
+    --space-xs:  4px;
+    --space-sm:  8px;
+    --space-md:  16px;
+    --space-lg:  24px;
+    --space-xl:  32px;
+    --space-2xl: 48px;
+
+    /* 圆角 */
+    --radius-sm: 8px;
+    --radius-md: 16px;
+    --radius-lg: 24px;
+    --radius-squircle: 32px;  /* 参考网站的 squircle 风格 */
+
+    /* 侧边栏 */
+    --sidebar-width: 240px;
+}
