@@ -16,7 +16,7 @@ CREATE TABLE IF NOT EXISTS music_recs (
     song_name   VARCHAR(200) NOT NULL,
     artist      VARCHAR(200),
     cover_url   VARCHAR(500),
-    link_url    VARCHAR(500),
+    file_path   VARCHAR(500),
     created_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 

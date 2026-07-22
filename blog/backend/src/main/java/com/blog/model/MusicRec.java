@@ -7,18 +7,18 @@ public class MusicRec {
     private String songName;
     private String artist;
     private String coverUrl;
-    private String linkUrl;
+    private String filePath;
     private LocalDateTime createdAt;
 
     public MusicRec() {}
 
     public MusicRec(Long id, String songName, String artist,
-                    String coverUrl, String linkUrl, LocalDateTime createdAt) {
+                    String coverUrl, String filePath, LocalDateTime createdAt) {
         this.id = id;
         this.songName = songName;
         this.artist = artist;
         this.coverUrl = coverUrl;
-        this.linkUrl = linkUrl;
+        this.filePath = filePath;
         this.createdAt = createdAt;
     }
 
@@ -30,8 +30,8 @@ public class MusicRec {
     public void setArtist(String artist) { this.artist = artist; }
     public String getCoverUrl() { return coverUrl; }
     public void setCoverUrl(String coverUrl) { this.coverUrl = coverUrl; }
-    public String getLinkUrl() { return linkUrl; }
-    public void setLinkUrl(String linkUrl) { this.linkUrl = linkUrl; }
+    public String getFilePath() { return filePath; }
+    public void setFilePath(String filePath) { this.filePath = filePath; }
     public LocalDateTime getCreatedAt() { return createdAt; }
     public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
 }

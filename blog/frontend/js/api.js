@@ -31,14 +31,6 @@ function fetchMusicRecommendations() {
     return fetchJSON(`${API_BASE}/music/recommendations`);
 }
 
-function fetchPlaylistTracks(playlistId) {
-    return fetchJSON(`${API_BASE}/music/playlist/${playlistId}/tracks`);
-}
-
-function fetchSongUrl(songId) {
-    return fetchJSON(`${API_BASE}/music/song/${songId}/url`);
-}
-
 function fetchSiteStats() {
     return fetchJSON(`${API_BASE}/site-stats`);
 }

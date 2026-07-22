@@ -25,11 +25,7 @@ VALUES
  '## 先学 SQL 的三个理由\n\n### 1. ORM 只是 SQL 的封装\n\nMyBatis、JPA、Hibernate 底层都是生成 SQL 语句。不理解 SQL 就理解不了 ORM 的行为。\n\n### 2. 问题排查绕不开 SQL\n\n线上慢查询、死锁、数据不一致——这些问题都需要你直接看 SQL 来分析。\n\n### 3. SQL 是通用的\n\nSQL 标准语法在 MySQL、PostgreSQL、Oracle 中大致相同，而 ORM 框架各家不同。\n\n## 建议的学习顺序\n\n1. 基本 CRUD 语句\n2. JOIN 和子查询\n3. 索引和查询优化\n4. 然后才学 JdbcTemplate / MyBatis\n5. 最后学 JPA / Hibernate',
  198, '2026-07-10 11:00:00', '2026-07-10 11:00:00');
 
-INSERT INTO music_recs (song_name, artist, cover_url, link_url)
-VALUES
-('晴天', '周杰伦', 'https://p2.music.126.net/xxx1.jpg', 'https://music.163.com/song?id=186016'),
-('Lemon', '米津玄師', 'https://p2.music.126.net/xxx2.jpg', 'https://music.163.com/song?id=536622304'),
-('Stay', 'The Kid LAROI, Justin Bieber', 'https://p2.music.126.net/xxx3.jpg', 'https://music.163.com/song?id=1863364874');
+-- 音乐数据：上传文件后自动填充，初始为空
 
 INSERT INTO users (username, password) VALUES ('admin', '$2a$10$GTX1pedTR00D1bMqGRdaC.YtdYeNt4XITZc6vWDD0SnuZgrgXqvIO');
 

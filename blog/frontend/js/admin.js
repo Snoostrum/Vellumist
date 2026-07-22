@@ -19,6 +19,7 @@ function injectDrawer() {
                 <button class="drawer-tab active" data-tab="articles">📄 文章</button>
                 <button class="drawer-tab" data-tab="categories">📁 分类</button>
                 <button class="drawer-tab" data-tab="tags">🏷️ 标签</button>
+                <button class="drawer-tab" data-tab="music">🎵 音乐</button>
                 <button class="drawer-tab" data-tab="comments">💬 评论</button>
             </div>
             <div class="drawer-body" id="drawer-body"></div>
@@ -125,6 +126,7 @@ function switchTab(tab) {
         case 'articles':    renderArticlesTab();    break;
         case 'categories':  renderCategoriesTab();  break;
         case 'tags':        renderTagsTab();        break;
+        case 'music':       renderMusicTab();       break;
         case 'comments':    renderCommentsTab();    break;
     }
 }
@@ -489,6 +491,88 @@ async function renderCommentsTab() {
             if (!confirm('确定删除这条评论？')) return;
             const res = await authFetch(API_BASE + '/admin/comments/' + btn.dataset.id, { method: 'DELETE' });
             if (res && res.code === 200) { toast('已删除'); renderCommentsTab(); }
+            else { toast('删除失败', true); }
+        });
+    });
+}
+
+// ===== 音乐管理 =====
+
+async function renderMusicTab() {
+    const body = document.getElementById('drawer-body');
+    body.innerHTML = '<p style="color:var(--color-muted)">加载中…</p>';
+
+    const res = await authFetch(API_BASE + '/admin/music');
+    if (!res || res.code !== 200) {
+        body.innerHTML = '<p style="color:#e55">加载失败</p>';
+        return;
+    }
+
+    let html = '<h4 style="margin-bottom:var(--space-md)">上传新音乐</h4>';
+    html += `
+        <div class="article-form">
+            <input type="text" id="music-name" placeholder="歌曲名称" />
+            <input type="text" id="music-artist" placeholder="艺术家" />
+            <label style="color:var(--color-muted);font-size:0.85rem">音频文件 (mp3/wav/flac, ≤20MB)</label>
+            <input type="file" id="music-file" accept="audio/*" />
+            <label style="color:var(--color-muted);font-size:0.85rem">封面图片</label>
+            <input type="file" id="music-cover" accept="image/*" />
+            <button class="btn-primary" id="btn-upload-music">上传</button>
+            <span id="music-upload-status" style="color:var(--color-muted);font-size:0.85rem"></span>
+        </div>
+    `;
+
+    html += '<h4 style="margin-top:var(--space-lg);margin-bottom:var(--space-md)">已有音乐 (' + res.data.length + ')</h4>';
+    html += res.data.map(m => `
+        <div class="admin-list-item">
+            <span class="item-title">${escapeHtml(m.songName)} — ${escapeHtml(m.artist || '未知')}</span>
+            <button class="del-music-btn" data-id="${m.id}">✕</button>
+        </div>
+    `).join('') || '<p style="color:var(--color-muted)">暂无音乐</p>';
+
+    body.innerHTML = html;
+
+    document.getElementById('btn-upload-music').addEventListener('click', async () => {
+        const songName = document.getElementById('music-name').value.trim();
+        const artist = document.getElementById('music-artist').value.trim();
+        const file = document.getElementById('music-file').files[0];
+        const cover = document.getElementById('music-cover').files[0];
+        const status = document.getElementById('music-upload-status');
+
+        if (!songName || !file || !cover) {
+            status.textContent = '请填写所有字段并选择文件';
+            return;
+        }
+        if (file.size > 20 * 1024 * 1024) {
+            status.textContent = '音频文件不能超过20MB';
+            return;
+        }
+
+        status.textContent = '上传中…';
+        const formData = new FormData();
+        formData.append('file', file);
+        formData.append('cover', cover);
+        formData.append('songName', songName);
+        formData.append('artist', artist);
+
+        const uploadRes = await authFetch(API_BASE + '/admin/music', {
+            method: 'POST',
+            body: formData,
+        });
+
+        if (uploadRes && uploadRes.code === 200) {
+            toast('音乐上传成功');
+            renderMusicTab();
+        } else {
+            status.textContent = uploadRes ? uploadRes.message : '上传失败';
+        }
+    });
+
+    body.querySelectorAll('.del-music-btn').forEach(btn => {
+        btn.addEventListener('click', async () => {
+            if (!confirm('确定删除？将同时删除文件。')) return;
+            const res = await authFetch(API_BASE + '/admin/music/' + btn.dataset.id, { method: 'DELETE' });
+            if (res && res.code === 200) { toast('已删除'); renderMusicTab(); }
             else { toast('删除失败', true); }
         });
     });

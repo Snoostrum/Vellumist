@@ -57,6 +57,7 @@ public class SecurityConfig {
                 .requestMatchers("/api/admin/**").authenticated()
                 .requestMatchers(HttpMethod.GET, "/api/**").permitAll()
                 .requestMatchers("/uploads/**").permitAll()
+                .requestMatchers("/uploads/music/**").permitAll()
                 .anyRequest().permitAll()
             )
             .addFilterBefore(new JwtAuthFilter(jwtUtil),

@@ -2,6 +2,7 @@ package com.blog.controller;
 
 import com.blog.model.*;
 import com.blog.service.AdminService;
+import com.blog.service.MusicService;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -14,9 +15,11 @@ import java.util.*;
 public class AdminController {
 
     private final AdminService adminService;
+    private final MusicService musicService;
 
-    public AdminController(AdminService adminService) {
+    public AdminController(AdminService adminService, MusicService musicService) {
         this.adminService = adminService;
+        this.musicService = musicService;
     }
 
     // ===== 文章管理 =====
@@ -101,6 +104,70 @@ public class AdminController {
     @DeleteMapping("/comments/{id}")
     public ApiResponse<Void> deleteComment(@PathVariable Long id) {
         adminService.deleteComment(id);
+        return ApiResponse.ok(null);
+    }
+
+    // ===== 音乐管理 =====
+
+    @GetMapping("/music")
+    public ApiResponse<List<MusicRec>> listMusic() {
+        return ApiResponse.ok(musicService.findAll());
+    }
+
+    @PostMapping("/music")
+    public ApiResponse<MusicRec> uploadMusic(
+            @RequestParam("file") MultipartFile file,
+            @RequestParam("cover") MultipartFile cover,
+            @RequestParam("songName") String songName,
+            @RequestParam("artist") String artist) {
+        // 校验音频类型
+        String audioType = file.getContentType();
+        if (audioType == null || !audioType.startsWith("audio/")) {
+            return ApiResponse.error(400, "仅支持音频文件");
+        }
+        // 校验音频大小（≤20MB）
+        if (file.getSize() > 20 * 1024 * 1024) {
+            return ApiResponse.error(413, "音频不能超过 20MB");
+        }
+        // 校验封面
+        String coverType = cover.getContentType();
+        if (coverType == null || !coverType.startsWith("image/")) {
+            return ApiResponse.error(400, "封面仅支持图片文件");
+        }
+
+        try {
+            Path musicDir = Path.of("uploads/music");
+            if (!Files.exists(musicDir)) {
+                Files.createDirectories(musicDir);
+            }
+
+            // 保存音频文件
+            String audioExt = getExtension(Objects.requireNonNull(file.getOriginalFilename()));
+            if (audioExt.isEmpty()) audioExt = ".mp3";
+            String audioFilename = UUID.randomUUID() + audioExt;
+            Path audioPath = musicDir.resolve(audioFilename);
+            file.transferTo(audioPath.toFile());
+
+            // 保存封面图
+            String coverExt = getExtension(Objects.requireNonNull(cover.getOriginalFilename()));
+            if (coverExt.isEmpty()) coverExt = ".jpg";
+            String coverFilename = UUID.randomUUID() + coverExt;
+            Path coverPath = musicDir.resolve(coverFilename);
+            cover.transferTo(coverPath.toFile());
+
+            String fileUrl = "/uploads/music/" + audioFilename;
+            String coverUrl = "/uploads/music/" + coverFilename;
+
+            MusicRec rec = musicService.create(songName, artist, coverUrl, fileUrl);
+            return ApiResponse.ok(rec);
+        } catch (IOException e) {
+            return ApiResponse.error(500, "上传失败: " + e.getMessage());
+        }
+    }
+
+    @DeleteMapping("/music/{id}")
+    public ApiResponse<Void> deleteMusic(@PathVariable Long id) {
+        musicService.delete(id);
         return ApiResponse.ok(null);
     }
 

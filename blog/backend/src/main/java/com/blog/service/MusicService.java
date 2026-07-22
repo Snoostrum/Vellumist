@@ -1,50 +1,82 @@
 package com.blog.service;
 
 import com.blog.model.MusicRec;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 
-import java.util.ArrayList;
+import java.sql.*;
 import java.util.List;
-import java.util.Map;
 
 @Service
 public class MusicService {
 
-    private final RestTemplate restTemplate = new RestTemplate();
-    private static final String NETEASE_API = "http://localhost:3000";
+    private final JdbcTemplate jdbc;
 
-    @SuppressWarnings("unchecked")
-    public List<MusicRec> getRecommendations() {
-        try {
-            String url = NETEASE_API + "/personalized?limit=6";
-            Map<String, Object> response = restTemplate.getForObject(url, Map.class);
-
-            if (response == null || !response.containsKey("result")) {
-                return getFallbackRecommendations();
-            }
-
-            List<Map<String, Object>> playlists =
-                    (List<Map<String, Object>>) response.get("result");
-
-            List<MusicRec> recs = new ArrayList<>();
-            for (Map<String, Object> pl : playlists) {
-                MusicRec rec = new MusicRec();
-                rec.setSongName((String) pl.get("name"));
-                rec.setCoverUrl((String) pl.get("picUrl"));
-                Number id = (Number) pl.get("id");
-                rec.setLinkUrl("https://music.163.com/playlist?id=" + id);
-                rec.setArtist("推荐歌单");
-                recs.add(rec);
-            }
-            return recs;
-        } catch (Exception e) {
-            return getFallbackRecommendations();
-        }
+    public MusicService(JdbcTemplate jdbc) {
+        this.jdbc = jdbc;
     }
 
-    private List<MusicRec> getFallbackRecommendations() {
-        // 当网易云 API 不可用时返回空列表，前端会显示 fallback 内容
-        return List.of();
+    public List<MusicRec> findAll() {
+        String sql = """
+            SELECT id, song_name, artist, cover_url, file_path, created_at
+            FROM music_recs ORDER BY created_at DESC
+            """;
+        return jdbc.query(sql, new MusicRecRowMapper());
+    }
+
+    public MusicRec create(String songName, String artist, String coverUrl, String filePath) {
+        String sql = """
+            INSERT INTO music_recs (song_name, artist, cover_url, file_path)
+            VALUES (?, ?, ?, ?)
+            """;
+        KeyHolder keyHolder = new GeneratedKeyHolder();
+        jdbc.update(con -> {
+            PreparedStatement ps = con.prepareStatement(sql, new String[]{"id"});
+            ps.setString(1, songName);
+            ps.setString(2, artist);
+            ps.setString(3, coverUrl);
+            ps.setString(4, filePath);
+            return ps;
+        }, keyHolder);
+        Number key = keyHolder.getKey();
+        MusicRec rec = new MusicRec();
+        rec.setId(key != null ? key.longValue() : null);
+        rec.setSongName(songName);
+        rec.setArtist(artist);
+        rec.setCoverUrl(coverUrl);
+        rec.setFilePath(filePath);
+        return rec;
+    }
+
+    public void delete(Long id) {
+        // 获取文件路径以便删除
+        String filePath = jdbc.queryForObject(
+                "SELECT file_path FROM music_recs WHERE id = ?",
+                String.class, id);
+        if (filePath != null) {
+            try {
+                java.nio.file.Files.deleteIfExists(java.nio.file.Path.of(filePath));
+            } catch (Exception e) {
+                // 文件不存在就算了
+            }
+        }
+        jdbc.update("DELETE FROM music_recs WHERE id = ?", id);
+    }
+
+    private static class MusicRecRowMapper implements RowMapper<MusicRec> {
+        @Override
+        public MusicRec mapRow(ResultSet rs, int rowNum) throws SQLException {
+            return new MusicRec(
+                rs.getLong("id"),
+                rs.getString("song_name"),
+                rs.getString("artist"),
+                rs.getString("cover_url"),
+                rs.getString("file_path"),
+                rs.getTimestamp("created_at").toLocalDateTime()
+            );
+        }
     }
 }
