@@ -1,76 +1,111 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="zh-CN">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="个人博客 — 记录学习与思考">
-    <title>lvy-neko</title>
-    <link rel="stylesheet" href="css/variables.css">
-    <link rel="stylesheet" href="css/layout.css">
-    <link rel="stylesheet" href="css/components.css">
-    <link rel="stylesheet" href="css/animations.css">
-    <link rel="icon" href="images/favicon.svg" type="image/svg+xml">
-</head>
-<body>
-    <div class="app-layout">
-        <!-- 移动端汉堡按钮 -->
-        <button class="hamburger" id="hamburger" aria-label="菜单">☰</button>
-
-        <!-- 侧边栏 -->
-        <aside class="sidebar" id="sidebar">
-            <a href="index.html" class="sidebar-brand">lvy-neko</a>
-            <nav class="sidebar-nav">
-                <a href="#articles" class="active">📝 近期文章</a>
-                <a href="#music">🎵 音乐推荐</a>
-            </nav>
-            <div style="margin-top: auto; font-size: 0.8rem; color: var(--color-muted);">
-                (开发中)
-            </div>
-        </aside>
-
-        <!-- 主内容区 -->
-        <main class="main-content">
-            <!-- 欢迎语 -->
-            <div class="greeting" id="greeting"></div>
-
-            <!-- 日历小部件 -->
-            <div class="calendar" id="calendar"></div>
-
-            <!-- 插画展示区 -->
-            <div class="illustration">
-                <img src="images/illustration.png" alt="illustration" id="illustration-img"
-                     onerror="this.parentElement.style.display='none'">
-            </div>
-
-            <!-- 社交链接 -->
-            <div class="social-links" id="social-links"></div>
-
-            <!-- 随机推荐 -->
-            <section id="random-article-section">
-                <div class="section-title">🔀 随机推荐</div>
-                <div id="random-article"></div>
-            </section>
-
-            <!-- 最新文章 -->
-            <section id="articles">
-                <div class="section-title">📝 最新文章</div>
-                <div class="article-list" id="article-list"></div>
-                <div id="article-pagination" style="margin-top: var(--space-lg);"></div>
-            </section>
-
-            <!-- 音乐推荐 -->
-            <section id="music">
-                <div class="section-title">🎵 音乐推荐</div>
-                <div class="music-list" id="music-list"></div>
-            </section>
-
-            <!-- 站点统计 -->
-            <div class="site-stats" id="site-stats" style="margin-top: var(--space-2xl);"></div>
-        </main>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="个人博客 — 记录学习与思考" />
+    <title>不如睡觉</title>
+    <link rel="stylesheet" href="css/variables.css" />
+    <link rel="stylesheet" href="css/layout.css" />
+    <link rel="stylesheet" href="css/components.css" />
+    <link rel="stylesheet" href="css/animations.css" />
+    <link rel="stylesheet" href="css/admin.css" />
+    <link rel="icon" href="images/favicon.svg" type="image/svg+xml" />
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  </head>
+  <body>
+    <!-- 顶部品牌 -->
+    <div class="topbar">
+      <a href="index.html" class="topbar-brand">不如睡觉</a>
     </div>
 
+    <!-- 主内容区 -->
+    <main class="main-content">
+      <!-- 欢迎语 -->
+      <div class="greeting fade-section" id="greeting"></div>
+
+      <!-- 英雄区：插画 | 时间 + 音乐 -->
+      <div class="hero-row fade-section">
+        <!-- 插画展示区 -->
+        <div class="illustration">
+          <img
+            src="images/illustration.png"
+            alt="illustration"
+            id="illustration-img"
+            onerror="this.parentElement.style.display = 'none'"
+          />
+        </div>
+
+        <!-- 右侧：时间 + 音乐 -->
+        <div class="hero-sidebar">
+          <!-- 时间区块 -->
+          <div class="time-block" id="time-block">
+            <div class="time-prompt">&gt; /time</div>
+            <div class="time-value" id="time-value">--</div>
+            <div class="time-status" id="time-status">连接中…</div>
+          </div>
+
+          <!-- 音乐播放器 -->
+          <div class="section-title">🎵 音乐推荐</div>
+          <div class="music-player" id="music-player">
+            <!-- 当前播放信息 -->
+            <div class="np-row">
+              <img class="np-cover" id="np-cover" src="" alt="" />
+              <div class="np-info">
+                <div class="np-name" id="np-name">未在播放</div>
+                <div class="np-artist" id="np-artist">—</div>
+              </div>
+            </div>
+            <!-- 进度条 -->
+            <input type="range" class="progress-bar" id="progress-bar" min="0" max="100" value="0" />
+            <div class="time-row">
+              <span id="time-current">00:00</span>
+              <span id="time-total">00:00</span>
+            </div>
+            <!-- 控制按钮 -->
+            <div class="ctrl-row">
+              <button class="ctrl-btn" id="btn-prev" title="上一首">⏮</button>
+              <button class="ctrl-btn play-btn" id="btn-play" title="播放">▶</button>
+              <button class="ctrl-btn" id="btn-next" title="下一首">⏭</button>
+              <div class="vol-group">
+                <span class="vol-icon" id="vol-icon" title="静音">🔊</span>
+                <input type="range" class="vol-slider" id="vol-slider" min="0" max="100" value="80" />
+              </div>
+            </div>
+            <!-- 曲目列表 -->
+            <div class="track-list" id="track-list">
+              <div class="np-placeholder">加载中…</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 社交链接 -->
+      <div class="social-links fade-section" id="social-links"></div>
+
+      <!-- 随机推荐 -->
+      <section id="random-article-section" class="fade-section">
+        <div class="section-title">🔀 随机推荐</div>
+        <div id="random-article"></div>
+      </section>
+
+      <!-- 最新文章 -->
+      <section id="articles" class="fade-section">
+        <div class="section-title">📝 最新文章</div>
+        <div class="article-list" id="article-list"></div>
+        <div
+          id="article-pagination"
+          style="margin-top: var(--space-lg)"
+        ></div>
+      </section>
+
+      <!-- 站点统计 -->
+      <div class="site-stats fade-section" id="site-stats"></div>
+    </main>
+
     <script src="js/api.js"></script>
-    <script src="js/calendar.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/admin.js"></script>
     <script src="js/home.js"></script>
-</body>
+  </body>
 </html>

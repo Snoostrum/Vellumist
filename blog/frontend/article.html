@@ -1,33 +1,32 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="zh-CN">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>文章 — lvy-neko</title>
-    <link rel="stylesheet" href="css/variables.css">
-    <link rel="stylesheet" href="css/layout.css">
-    <link rel="stylesheet" href="css/components.css">
-    <link rel="stylesheet" href="css/animations.css">
-    <link rel="icon" href="images/favicon.svg" type="image/svg+xml">
-</head>
-<body>
-    <div class="app-layout">
-        <!-- 侧边栏 -->
-        <aside class="sidebar" id="sidebar">
-            <a href="index.html" class="sidebar-brand">lvy-neko</a>
-            <nav class="sidebar-nav">
-                <a href="index.html">📝 返回首页</a>
-            </nav>
-        </aside>
-
-        <!-- 主内容区 -->
-        <main class="main-content">
-            <a href="index.html" class="back-link">← 返回首页</a>
-            <article class="article-detail" id="article-detail"></article>
-        </main>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>文章 — 不如睡觉</title>
+    <link rel="stylesheet" href="css/variables.css" />
+    <link rel="stylesheet" href="css/layout.css" />
+    <link rel="stylesheet" href="css/components.css" />
+    <link rel="stylesheet" href="css/animations.css" />
+    <link rel="stylesheet" href="css/admin.css" />
+    <link rel="icon" href="images/favicon.svg" type="image/svg+xml" />
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  </head>
+  <body>
+    <!-- 顶部品牌 -->
+    <div class="topbar">
+      <a href="index.html" class="topbar-brand">不如睡觉</a>
     </div>
 
+    <!-- 主内容区 -->
+    <main class="main-content">
+      <a href="index.html" class="back-link">← 返回首页</a>
+      <article class="article-detail fade-section" id="article-detail"></article>
+    </main>
+
     <script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/admin.js"></script>
     <script src="js/article.js"></script>
-</body>
+  </body>
 </html>
