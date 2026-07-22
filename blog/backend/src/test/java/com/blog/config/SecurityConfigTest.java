@@ -41,10 +41,10 @@ class SecurityConfigTest {
 
     @Test
     void shouldAllowLoginWithoutAuth() throws Exception {
-        // 此时 AuthController 还未创建，先验证不会被 Security 拦截
+        // AuthController 已创建，POST /api/auth/login 不应被 Security 拦截
         mockMvc.perform(post("/api/auth/login")
                 .contentType("application/json")
                 .content("{\"username\":\"admin\",\"password\":\"admin123\"}"))
-                .andExpect(status().isNotFound()); // 会 404 但不会 401/403
+                .andExpect(status().isOk()); // 登录接口已存在，返回 200
     }
 }
