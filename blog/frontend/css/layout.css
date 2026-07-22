@@ -67,18 +67,23 @@ body {
     padding: var(--space-md) var(--space-lg);
 }
 
+.time-line {
+    display: flex;
+    align-items: baseline;
+    gap: var(--space-sm);
+}
+
 .time-prompt {
-    color: var(--color-accent);
+    color: var(--color-muted);
     font-family: var(--font-mono);
     font-size: 0.85rem;
-    margin-bottom: var(--space-xs);
 }
 
 .time-value {
     font-family: var(--font-mono);
-    font-size: 1.5rem;
+    font-size: 1rem;
     font-weight: 600;
-    color: var(--color-text);
+    color: var(--color-accent);
 }
 
 .time-status {
