@@ -9,6 +9,8 @@ public class Article {
     private String content;
     private String coverImage;
     private int viewCount;
+    private String status;
+    private Long categoryId;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
@@ -39,6 +41,10 @@ public class Article {
     public void setCoverImage(String coverImage) { this.coverImage = coverImage; }
     public int getViewCount() { return viewCount; }
     public void setViewCount(int viewCount) { this.viewCount = viewCount; }
+    public String getStatus() { return status; }
+    public void setStatus(String status) { this.status = status; }
+    public Long getCategoryId() { return categoryId; }
+    public void setCategoryId(Long categoryId) { this.categoryId = categoryId; }
     public LocalDateTime getCreatedAt() { return createdAt; }
     public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
     public LocalDateTime getUpdatedAt() { return updatedAt; }
