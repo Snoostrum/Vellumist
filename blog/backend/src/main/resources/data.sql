@@ -30,3 +30,23 @@ VALUES
 ('晴天', '周杰伦', 'https://p2.music.126.net/xxx1.jpg', 'https://music.163.com/song?id=186016'),
 ('Lemon', '米津玄師', 'https://p2.music.126.net/xxx2.jpg', 'https://music.163.com/song?id=536622304'),
 ('Stay', 'The Kid LAROI, Justin Bieber', 'https://p2.music.126.net/xxx3.jpg', 'https://music.163.com/song?id=1863364874');
+
+INSERT INTO users (username, password) VALUES ('admin', '$2a$10$EixZaYVK1fsbw1ZfbX3OXePaWxn96p36PQm4sEPhMNPfIYULoBhFW');
+
+INSERT INTO categories (name, slug) VALUES
+('技术', 'tech'),
+('生活', 'life'),
+('笔记', 'notes');
+
+INSERT INTO tags (name, slug) VALUES
+('Java', 'java'),
+('Spring Boot', 'spring-boot'),
+('前端', 'frontend'),
+('Git', 'git'),
+('Nginx', 'nginx'),
+('SQL', 'sql');
+
+INSERT INTO comments (article_id, author_name, content, created_at) VALUES
+(1, '小明', '写得很清楚，跟着做成功了！', '2026-06-12 15:00:00'),
+(1, '小红', '请问 JDK 版本最低要求是多少？', '2026-06-13 09:00:00'),
+(2, '小刚', 'Git 确实比 SVN 好用多了', '2026-06-18 20:00:00');
