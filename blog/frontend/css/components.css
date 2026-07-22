@@ -96,74 +96,162 @@
     color: var(--color-muted);
 }
 
-/* === 日历小部件 === */
-.calendar {
-    background-color: var(--color-card);
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius-md);
-    padding: var(--space-md);
-    width: fit-content;
-}
-
-.calendar-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: var(--space-md);
-    font-weight: 600;
-}
-
-.calendar-grid {
-    display: grid;
-    grid-template-columns: repeat(7, 1fr);
-    gap: var(--space-xs);
-    text-align: center;
-}
-
-.calendar-grid .day-label {
-    font-size: 0.75rem;
-    color: var(--color-muted);
-    padding: var(--space-xs) 0;
-}
-
-.calendar-grid .day {
-    width: 32px;
-    height: 32px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 50%;
-    font-size: 0.85rem;
-    cursor: default;
-    position: relative;
-}
-
-.calendar-grid .day.has-article::after {
-    content: '';
-    position: absolute;
-    bottom: 2px;
-    width: 4px;
-    height: 4px;
-    border-radius: 50%;
-    background-color: var(--color-accent);
-}
-
-.calendar-grid .day.empty {
-    color: transparent;
-}
-
 /* === 插画展示区 === */
-.illustration {
-    max-width: 360px;
-    margin: 0 auto var(--space-2xl);
-    opacity: 0;
-    transform: translateY(20px);
-    animation: fadeInUp 0.8s ease forwards;
-}
-
 .illustration img {
     width: 100%;
     border-radius: var(--radius-squircle);
+}
+
+/* === 音乐播放器 === */
+.music-player {
+    background: var(--color-card);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    padding: var(--space-md);
+}
+
+.np-row {
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+    margin-bottom: var(--space-md);
+}
+
+.np-cover {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid var(--color-border);
+}
+
+.np-cover.playing {
+    animation: spin 12s linear infinite;
+}
+
+.np-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+}
+
+.np-name {
+    font-size: 0.95rem;
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.np-artist {
+    font-size: 0.8rem;
+    color: var(--color-muted);
+}
+
+.progress-bar {
+    width: 100%;
+    height: 4px;
+    accent-color: var(--color-accent);
+    cursor: pointer;
+    margin-bottom: var(--space-xs);
+}
+
+.time-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.75rem;
+    color: var(--color-muted);
+    margin-bottom: var(--space-sm);
+}
+
+.ctrl-row {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+}
+
+.ctrl-btn {
+    background: none;
+    border: none;
+    color: var(--color-text);
+    font-size: 1rem;
+    cursor: pointer;
+    padding: 4px 8px;
+    border-radius: var(--radius-sm);
+    transition: color 0.2s;
+}
+
+.ctrl-btn:hover {
+    color: var(--color-accent);
+}
+
+.vol-group {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin-left: auto;
+}
+
+.vol-icon {
+    cursor: pointer;
+    font-size: 0.9rem;
+}
+
+.vol-slider {
+    width: 80px;
+    height: 4px;
+    accent-color: var(--color-accent);
+    cursor: pointer;
+}
+
+.track-list {
+    margin-top: var(--space-md);
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.track-item {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    padding: var(--space-xs) var(--space-sm);
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    font-size: 0.85rem;
+    transition: background-color 0.2s;
+}
+
+.track-item:hover,
+.track-item.active {
+    background: var(--color-card-hover);
+}
+
+.track-idx {
+    color: var(--color-muted);
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    min-width: 24px;
+}
+
+.track-name {
+    flex: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.track-dur {
+    color: var(--color-muted);
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+}
+
+.np-placeholder {
+    text-align: center;
+    color: var(--color-muted);
+    font-size: 0.85rem;
+    padding: var(--space-md);
 }
 
 /* === 欢迎语 === */

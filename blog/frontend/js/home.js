@@ -82,7 +82,7 @@ function updateTimeDisplay() {
   const ampm = hours24 >= 12 ? "PM" : "AM";
   const hh = hours24 % 12 || 12;
 
-  valueEl.textContent = `${dd}-${mm}-${yyyy}  ${String(hh).padStart(2, "0")}:${minutes} ${ampm}`;
+  valueEl.textContent = `${dd}-${mm}-${yyyy} ${String(hh).padStart(2, "0")}:${minutes} ${ampm}`;
 }
 
 function loadRandomArticle() {

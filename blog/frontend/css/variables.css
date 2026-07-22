@@ -9,8 +9,6 @@
     --color-card:      rgba(255, 255, 255, 0.05);
     --color-card-hover:rgba(255, 255, 255, 0.10);
     --color-border:    rgba(255, 255, 255, 0.08);
-    --color-sidebar:   rgba(255, 255, 255, 0.03);
-
     /* 排版 */
     --font-sans: system-ui, -apple-system, 'Segoe UI', sans-serif;
     --font-mono: 'Consolas', 'Monaco', monospace;
