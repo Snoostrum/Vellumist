@@ -31,7 +31,7 @@ VALUES
 ('Lemon', '米津玄師', 'https://p2.music.126.net/xxx2.jpg', 'https://music.163.com/song?id=536622304'),
 ('Stay', 'The Kid LAROI, Justin Bieber', 'https://p2.music.126.net/xxx3.jpg', 'https://music.163.com/song?id=1863364874');
 
-INSERT INTO users (username, password) VALUES ('admin', '$2a$10$EixZaYVK1fsbw1ZfbX3OXePaWxn96p36PQm4sEPhMNPfIYULoBhFW');
+INSERT INTO users (username, password) VALUES ('admin', '$2a$10$GTX1pedTR00D1bMqGRdaC.YtdYeNt4XITZc6vWDD0SnuZgrgXqvIO');
 
 INSERT INTO categories (name, slug) VALUES
 ('技术', 'tech'),
