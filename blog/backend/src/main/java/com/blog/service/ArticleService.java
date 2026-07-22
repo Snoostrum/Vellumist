@@ -23,8 +23,9 @@ public class ArticleService {
         int offset = (page - 1) * size;
         String sql = """
             SELECT id, title, summary, content, cover_image,
-                   view_count, created_at, updated_at
+                   view_count, status, category_id, created_at, updated_at
             FROM articles
+            WHERE status = 'PUBLISHED'
             ORDER BY created_at DESC
             LIMIT ? OFFSET ?
             """;
@@ -34,8 +35,8 @@ public class ArticleService {
     public Optional<Article> findById(Long id) {
         String sql = """
             SELECT id, title, summary, content, cover_image,
-                   view_count, created_at, updated_at
-            FROM articles WHERE id = ?
+                   view_count, status, category_id, created_at, updated_at
+            FROM articles WHERE id = ? AND status = 'PUBLISHED'
             """;
         List<Article> results = jdbc.query(sql, new ArticleRowMapper(), id);
         return results.isEmpty() ? Optional.empty() : Optional.of(results.get(0));
@@ -44,8 +45,8 @@ public class ArticleService {
     public Article findRandom() {
         String sql = """
             SELECT id, title, summary, content, cover_image,
-                   view_count, created_at, updated_at
-            FROM articles ORDER BY RAND() LIMIT 1
+                   view_count, status, category_id, created_at, updated_at
+            FROM articles WHERE status = 'PUBLISHED' ORDER BY RAND() LIMIT 1
             """;
         List<Article> results = jdbc.query(sql, new ArticleRowMapper());
         return results.isEmpty() ? null : results.get(0);
@@ -55,7 +56,7 @@ public class ArticleService {
         String sql = """
             SELECT DISTINCT CAST(created_at AS DATE) as article_date
             FROM articles
-            WHERE YEAR(created_at) = ? AND MONTH(created_at) = ?
+            WHERE status = 'PUBLISHED' AND YEAR(created_at) = ? AND MONTH(created_at) = ?
             ORDER BY article_date
             """;
         return jdbc.query(sql,
@@ -66,14 +67,14 @@ public class ArticleService {
     public long getTotalWordCount() {
         String sql = """
             SELECT COALESCE(SUM(CHAR_LENGTH(content)), 0)
-            FROM articles
+            FROM articles WHERE status = 'PUBLISHED'
             """;
         Long result = jdbc.queryForObject(sql, Long.class);
         return result != null ? result : 0L;
     }
 
     public int getArticleCount() {
-        String sql = "SELECT COUNT(*) FROM articles";
+        String sql = "SELECT COUNT(*) FROM articles WHERE status = 'PUBLISHED'";
         Integer result = jdbc.queryForObject(sql, Integer.class);
         return result != null ? result : 0;
     }
@@ -89,7 +90,7 @@ public class ArticleService {
     private static class ArticleRowMapper implements RowMapper<Article> {
         @Override
         public Article mapRow(ResultSet rs, int rowNum) throws SQLException {
-            return new Article(
+            Article article = new Article(
                 rs.getLong("id"),
                 rs.getString("title"),
                 rs.getString("summary"),
@@ -99,6 +100,12 @@ public class ArticleService {
                 rs.getTimestamp("created_at").toLocalDateTime(),
                 rs.getTimestamp("updated_at").toLocalDateTime()
             );
+            article.setStatus(rs.getString("status"));
+            long catId = rs.getLong("category_id");
+            if (!rs.wasNull()) {
+                article.setCategoryId(catId);
+            }
+            return article;
         }
     }
 }
