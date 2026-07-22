@@ -1,8 +1,8 @@
-const API_BASE = '/api';
+const API_BASE = 'http://localhost:8081/api';
 
-async function fetchJSON(url) {
+async function fetchJSON(url, options = {}) {
     try {
-        const res = await fetch(url);
+        const res = await fetch(url, options);
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         return await res.json();
     } catch (err) {
@@ -31,8 +31,20 @@ function fetchMusicRecommendations() {
     return fetchJSON(`${API_BASE}/music/recommendations`);
 }
 
+function fetchPlaylistTracks(playlistId) {
+    return fetchJSON(`${API_BASE}/music/playlist/${playlistId}/tracks`);
+}
+
+function fetchSongUrl(songId) {
+    return fetchJSON(`${API_BASE}/music/song/${songId}/url`);
+}
+
 function fetchSiteStats() {
     return fetchJSON(`${API_BASE}/site-stats`);
+}
+
+function fetchServerTime() {
+    return fetchJSON(`${API_BASE}/time`);
 }
 
 function escapeHtml(str) {
