@@ -1,4 +1,13 @@
-const API_BASE = 'http://localhost:8081/api';
+// API 地址：部署时由 nginx 同源反代，用相对路径；
+// 本地开发时前端静态服务跑在 8081、后端在 8080，自动指向后端。
+const API_BASE = (() => {
+    const host = window.location.hostname;
+    const isLocal = host === 'localhost' || host === '127.0.0.1';
+    if (isLocal && window.location.port === '8081') {
+        return 'http://localhost:8080/api';
+    }
+    return '/api';
+})();
 
 async function fetchJSON(url, options = {}) {
     try {
