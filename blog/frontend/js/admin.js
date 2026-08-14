@@ -10,6 +10,11 @@ window.onAuthExpired = () => {
     renderLoginPage('登录已过期，请重新登录');
 };
 
+// 网络层失败（后端未启动/被关闭）时提示
+window.onApiDown = () => {
+    toast('无法连接服务器，请确认后端已启动', true);
+};
+
 function initAdminPage() {
     if (isLoggedIn()) {
         renderPanel();

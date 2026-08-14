@@ -70,6 +70,10 @@ async function authFetch(url, options = {}) {
         return await res.json();
     } catch (err) {
         console.error('Auth fetch error:', url, err);
+        // 网络层失败（后端未启动等）：提示当前页面（管理后台）
+        if (typeof window.onApiDown === 'function') {
+            window.onApiDown();
+        }
         return null;
     }
 }
