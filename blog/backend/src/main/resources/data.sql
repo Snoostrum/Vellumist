@@ -27,7 +27,8 @@ VALUES
 
 -- 音乐数据：上传文件后自动填充，初始为空
 
-INSERT INTO users (username, password) VALUES ('admin', '$2a$10$GTX1pedTR00D1bMqGRdaC.YtdYeNt4XITZc6vWDD0SnuZgrgXqvIO');
+-- 默认管理员账号：admin（初始密码见部署文档/交付说明，部署后请立即修改）
+INSERT INTO users (username, password) VALUES ('admin', 'BCRYPT_REDACTED');
 
 INSERT INTO categories (name, slug) VALUES
 ('技术', 'tech'),

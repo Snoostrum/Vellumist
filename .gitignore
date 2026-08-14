@@ -12,3 +12,10 @@ Thumbs.db
 
 # Logs
 *.log
+
+# 上传文件（图片/音乐，不应入库）
+uploads/
+blog/backend/uploads/
+
+# 本地敏感配置
+.env

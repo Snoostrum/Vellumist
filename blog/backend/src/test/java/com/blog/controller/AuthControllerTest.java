@@ -22,7 +22,7 @@ class AuthControllerTest {
 
     @Test
     void shouldLoginSuccessfully() throws Exception {
-        String body = "{\"username\":\"admin\",\"password\":\"admin123\"}";
+        String body = "{\"username\":\"admin\",\"password\":\"Test-Only-Admin-Pw-2026\"}";
         mockMvc.perform(post("/api/auth/login")
                         .contentType("application/json")
                         .content(body))

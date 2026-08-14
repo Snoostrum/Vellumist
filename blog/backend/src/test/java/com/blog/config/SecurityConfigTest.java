@@ -44,7 +44,7 @@ class SecurityConfigTest {
         // AuthController 已创建，POST /api/auth/login 不应被 Security 拦截
         mockMvc.perform(post("/api/auth/login")
                 .contentType("application/json")
-                .content("{\"username\":\"admin\",\"password\":\"admin123\"}"))
+                .content("{\"username\":\"admin\",\"password\":\"Test-Only-Admin-Pw-2026\"}"))
                 .andExpect(status().isOk()); // 登录接口已存在，返回 200
     }
 }

@@ -2,6 +2,7 @@ package com.blog.config;
 
 import com.blog.security.JwtAuthFilter;
 import com.blog.security.JwtUtil;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -16,11 +17,18 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+import java.util.Arrays;
 import java.util.List;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
+
+    @Value("${blog.jwt.secret}")
+    private String jwtSecret;
+
+    @Value("${blog.cors.allowed-origins:}")
+    private String allowedOrigins;
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -29,16 +37,23 @@ public class SecurityConfig {
 
     @Bean
     public JwtUtil jwtUtil() {
-        // 生产环境应从配置文件读取
-        return new JwtUtil("blog-jwt-secret-key-must-be-at-least-256-bits!!");
+        // 密钥来自配置：开发用 application.properties 默认值，
+        // 生产必须通过环境变量 BLOG_JWT_SECRET 覆盖，严禁硬编码提交到仓库
+        return new JwtUtil(jwtSecret);
     }
 
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(List.of("*"));
+        // 同源部署无需 CORS；仅当跨端口/跨域开发时，通过 blog.cors.allowed-origins 配置白名单
+        List<String> origins = Arrays.stream(allowedOrigins.split(","))
+                .map(String::trim)
+                .filter(s -> !s.isEmpty())
+                .toList();
+        config.setAllowedOrigins(origins);
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(List.of("*"));
+        config.setAllowCredentials(true);
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/api/**", config);
         return source;
@@ -57,7 +72,6 @@ public class SecurityConfig {
                 .requestMatchers("/api/admin/**").authenticated()
                 .requestMatchers(HttpMethod.GET, "/api/**").permitAll()
                 .requestMatchers("/uploads/**").permitAll()
-                .requestMatchers("/uploads/music/**").permitAll()
                 .anyRequest().permitAll()
             )
             .addFilterBefore(new JwtAuthFilter(jwtUtil),
