@@ -1,7 +1,15 @@
+const PAGE_SIZE = 5;
+
+// 从 URL 读取初始分类筛选（?category=分类ID）
+const urlParams = new URLSearchParams(window.location.search);
+let currentCategory = urlParams.get('category') ? parseInt(urlParams.get('category')) : null;
+let currentPage = 1;
+
 document.addEventListener("DOMContentLoaded", () => {
   renderGreeting();
   loadServerTime();
   loadRandomArticle();
+  loadCategories();
   loadArticles(1);
   loadMusicPlayer();
   loadSiteStats();
@@ -77,12 +85,11 @@ function updateTimeDisplay() {
   const dd = String(now.getDate()).padStart(2, "0");
   const mm = String(now.getMonth() + 1).padStart(2, "0");
   const yyyy = now.getFullYear();
-  const hours24 = now.getHours();
+  const hours = String(now.getHours()).padStart(2, "0");
   const minutes = String(now.getMinutes()).padStart(2, "0");
-  const ampm = hours24 >= 12 ? "PM" : "AM";
-  const hh = hours24 % 12 || 12;
 
-  valueEl.textContent = `${dd}-${mm}-${yyyy} ${String(hh).padStart(2, "0")}:${minutes} ${ampm}`;
+  // 24 小时制
+  valueEl.textContent = `${dd}-${mm}-${yyyy} ${hours}:${minutes}`;
 }
 
 function loadRandomArticle() {
@@ -98,8 +105,34 @@ function loadRandomArticle() {
   });
 }
 
+// ===== 分类筛选 =====
+
+function loadCategories() {
+  fetchCategories().then((res) => {
+    const container = document.getElementById("category-filter");
+    if (!container) return;
+    if (!res || res.code !== 200 || !res.data || res.data.length === 0) {
+      container.style.display = "none";
+      return;
+    }
+
+    const allActive = currentCategory === null ? "active" : "";
+    let html = `<a class="cat-chip ${allActive}" href="index.html">全部</a>`;
+    html += res.data
+      .map((c) => {
+        const active = currentCategory === c.id ? "active" : "";
+        return `<a class="cat-chip ${active}" href="index.html?category=${c.id}">${escapeHtml(c.name)} <span class="cat-count">${c.articleCount}</span></a>`;
+      })
+      .join("");
+    container.innerHTML = html;
+  });
+}
+
+// ===== 文章列表 + 分页 =====
+
 function loadArticles(page) {
-  fetchArticles(page, 5).then((res) => {
+  currentPage = page;
+  fetchArticles(page, PAGE_SIZE, currentCategory).then((res) => {
     const container = document.getElementById("article-list");
     if (!container) return;
 
@@ -114,8 +147,46 @@ function loadArticles(page) {
       });
     } else {
       container.innerHTML =
-        '<p style="color: var(--color-muted);">暂无文章</p>';
+        '<p style="color: var(--color-muted);">该分类下暂无文章</p>';
     }
+
+    const total = res ? res.total || 0 : 0;
+    renderPagination(total, page, PAGE_SIZE);
+  });
+}
+
+function renderPagination(total, page, size) {
+  const el = document.getElementById("article-pagination");
+  if (!el) return;
+  const pages = Math.max(1, Math.ceil(total / size));
+  if (pages <= 1) {
+    el.innerHTML = "";
+    return;
+  }
+
+  const btn = (label, target, disabled, active) => `
+    <button class="page-btn ${active ? "active" : ""}" ${disabled ? "disabled" : ""} data-page="${target}">${label}</button>`;
+
+  let html = '<div class="pagination">';
+  html += btn("← 上一页", page - 1, page <= 1, false);
+  // 最多显示 7 个页码，当前页居中
+  let start = Math.max(1, page - 3);
+  let end = Math.min(pages, start + 6);
+  start = Math.max(1, end - 6);
+  for (let i = start; i <= end; i++) {
+    html += btn(String(i), i, false, i === page);
+  }
+  html += btn("下一页 →", page + 1, page >= pages, false);
+  html += `<span class="page-info">共 ${total} 篇</span>`;
+  html += "</div>";
+  el.innerHTML = html;
+
+  el.querySelectorAll(".page-btn").forEach((b) => {
+    if (b.disabled) return;
+    b.addEventListener("click", () => {
+      loadArticles(parseInt(b.dataset.page));
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    });
   });
 }
 
@@ -298,6 +369,15 @@ function setupPlayerControls() {
     document.getElementById("time-total").textContent = formatDuration(
       audio.duration,
     );
+    // 同步曲目列表中的时长显示
+    const idx = player.currentIdx;
+    if (idx >= 0 && audio.duration) {
+      player.tracks[idx].duration = audio.duration;
+      const durEl = document.querySelector(
+        `.track-item[data-index="${idx}"] .track-dur`,
+      );
+      if (durEl) durEl.textContent = formatDuration(audio.duration);
+    }
   });
 
   audio.addEventListener("ended", playNext);
@@ -374,11 +454,14 @@ function renderArticleCard(article, isRandom) {
     day: "numeric",
   });
   const tagClass = isRandom ? "" : "card-stagger";
+  const categoryTag = article.categoryName
+    ? `<a class="card-category" href="index.html?category=${article.categoryId}">${escapeHtml(article.categoryName)}</a>`
+    : "";
   return `
         <a href="article.html?id=${article.id}"
            class="card article-card ${tagClass}"
            style="text-decoration: none;">
-            <div class="article-date">${date}</div>
+            <div class="article-date">${date}${categoryTag}</div>
             <div class="article-title">${escapeHtml(article.title)}</div>
             ${article.summary ? `<div class="article-summary">${escapeHtml(article.summary)}</div>` : ""}
         </a>

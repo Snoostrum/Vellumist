@@ -16,12 +16,41 @@
     <!-- 顶部品牌 -->
     <div class="topbar">
       <a href="index.html" class="topbar-brand">不如睡觉</a>
+      <nav class="topbar-nav">
+        <a href="archive.html">📚 归档</a>
+      </nav>
     </div>
 
     <!-- 主内容区 -->
     <main class="main-content">
       <a href="index.html" class="back-link">← 返回首页</a>
       <article class="article-detail fade-section" id="article-detail"></article>
+
+      <!-- 评论区 -->
+      <section class="comment-section fade-section" id="comment-section">
+        <h2 class="comment-title">💬 评论（<span id="comment-count">0</span>）</h2>
+        <div id="comment-list" class="comment-list"></div>
+        <form id="comment-form" class="comment-form" autocomplete="off">
+          <input
+            type="text"
+            id="comment-author"
+            class="comment-input"
+            placeholder="昵称（可选，≤30字）"
+            maxlength="30"
+          />
+          <textarea
+            id="comment-content"
+            class="comment-textarea"
+            placeholder="说点什么吧…（≤1000字）"
+            maxlength="1000"
+            required
+          ></textarea>
+          <div class="comment-form-row">
+            <span id="comment-status" class="comment-status"></span>
+            <button type="submit" class="btn-comment">发表评论</button>
+          </div>
+        </form>
+      </section>
     </main>
 
     <script src="js/api.js"></script>

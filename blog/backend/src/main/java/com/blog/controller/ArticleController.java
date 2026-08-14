@@ -6,7 +6,6 @@ import com.blog.service.ArticleService;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 @RestController
@@ -22,11 +21,13 @@ public class ArticleController {
     @GetMapping
     public ApiResponse<List<Article>> list(
             @RequestParam(defaultValue = "1") int page,
-            @RequestParam(defaultValue = "5") int size) {
+            @RequestParam(defaultValue = "5") int size,
+            @RequestParam(required = false) Long categoryId) {
         if (page < 1) page = 1;
         if (size < 1 || size > 20) size = 5;
-        List<Article> articles = articleService.findAll(page, size);
-        return ApiResponse.ok(articles);
+        List<Article> articles = articleService.findPage(page, size, categoryId);
+        long total = articleService.countPublished(categoryId);
+        return ApiResponse.ok(articles, total);
     }
 
     @GetMapping("/{id}")

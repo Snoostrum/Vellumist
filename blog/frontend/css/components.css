@@ -439,3 +439,310 @@
     border-top: 1px solid var(--color-border);
     margin: var(--space-lg) 0;
 }
+
+/* === 分类筛选 chips === */
+.category-filter {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-sm);
+    margin-bottom: var(--space-lg);
+}
+
+.cat-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    color: var(--color-muted);
+    text-decoration: none;
+    padding: var(--space-xs) var(--space-md);
+    border: 1px solid var(--color-border);
+    border-radius: 999px;
+    font-size: 0.85rem;
+    transition: color 0.2s, border-color 0.2s, background-color 0.2s;
+}
+
+.cat-chip:hover,
+.cat-chip.active {
+    color: var(--color-accent);
+    border-color: var(--color-accent);
+    background: rgba(171, 187, 243, 0.08);
+}
+
+.cat-count {
+    font-size: 0.75rem;
+    opacity: 0.7;
+}
+
+/* === 文章卡片上的分类标签 === */
+.card-category {
+    display: inline-block;
+    margin-left: var(--space-sm);
+    padding: 1px 8px;
+    border: 1px solid var(--color-accent);
+    border-radius: 999px;
+    color: var(--color-accent);
+    font-size: 0.72rem;
+    text-decoration: none;
+    vertical-align: middle;
+}
+
+.card-category:hover {
+    background: rgba(171, 187, 243, 0.12);
+}
+
+/* === 分页 === */
+.pagination {
+    display: flex;
+    align-items: center;
+    gap: var(--space-xs);
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.page-btn {
+    background: none;
+    border: 1px solid var(--color-border);
+    color: var(--color-text);
+    border-radius: var(--radius-sm);
+    padding: var(--space-xs) var(--space-sm);
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: color 0.2s, border-color 0.2s;
+}
+
+.page-btn:hover:not(:disabled) {
+    color: var(--color-accent);
+    border-color: var(--color-accent);
+}
+
+.page-btn.active {
+    color: var(--color-accent);
+    border-color: var(--color-accent);
+    background: rgba(171, 187, 243, 0.08);
+}
+
+.page-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+.page-info {
+    margin-left: var(--space-sm);
+    color: var(--color-muted);
+    font-size: 0.8rem;
+}
+
+/* === 评论区 === */
+.comment-section {
+    max-width: 720px;
+    margin-top: var(--space-2xl);
+    padding-top: var(--space-xl);
+    border-top: 1px solid var(--color-border);
+}
+
+.comment-title {
+    font-size: 1.1rem;
+    color: var(--color-text);
+    margin-bottom: var(--space-lg);
+}
+
+.comment-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+    margin-bottom: var(--space-xl);
+}
+
+.comment-item {
+    background: var(--color-card);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    padding: var(--space-md);
+}
+
+.comment-head {
+    display: flex;
+    align-items: baseline;
+    gap: var(--space-sm);
+    margin-bottom: var(--space-xs);
+}
+
+.comment-author {
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: var(--color-text);
+}
+
+.comment-time {
+    font-size: 0.75rem;
+    color: var(--color-muted);
+}
+
+.comment-body {
+    font-size: 0.9rem;
+    line-height: 1.6;
+    color: var(--color-text);
+    word-break: break-word;
+}
+
+.comment-empty {
+    color: var(--color-muted);
+    font-size: 0.9rem;
+}
+
+.comment-form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+}
+
+.comment-input,
+.comment-textarea {
+    background: var(--color-card);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    color: var(--color-text);
+    padding: var(--space-sm) var(--space-md);
+    font-size: 0.9rem;
+    font-family: inherit;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+.comment-input:focus,
+.comment-textarea:focus {
+    border-color: var(--color-accent);
+}
+
+.comment-textarea {
+    resize: vertical;
+    min-height: 90px;
+    line-height: 1.5;
+}
+
+.comment-form-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-sm);
+}
+
+.comment-status {
+    font-size: 0.8rem;
+    color: var(--color-muted);
+}
+
+.comment-status.ok {
+    color: #7bd88f;
+}
+
+.comment-status.err {
+    color: #e55;
+}
+
+.btn-comment {
+    background: var(--color-accent);
+    border: none;
+    color: #1a1a2e;
+    font-weight: 600;
+    border-radius: var(--radius-sm);
+    padding: var(--space-sm) var(--space-lg);
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: opacity 0.2s;
+}
+
+.btn-comment:hover {
+    opacity: 0.85;
+}
+
+.btn-comment:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* === 顶栏导航 === */
+.topbar-nav {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+}
+
+.topbar-nav a {
+    color: var(--color-muted);
+    text-decoration: none;
+    font-size: 0.9rem;
+    padding: var(--space-xs) var(--space-sm);
+    border-radius: var(--radius-sm);
+    transition: color 0.2s, background-color 0.2s;
+}
+
+.topbar-nav a:hover,
+.topbar-nav a.active {
+    color: var(--color-accent);
+    background: rgba(171, 187, 243, 0.08);
+}
+
+/* === 归档页 === */
+.archive-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: var(--space-xl);
+    color: var(--color-text);
+}
+
+.archive-cat {
+    margin-bottom: var(--space-2xl);
+}
+
+.archive-cat-title {
+    font-size: 1.1rem;
+    color: var(--color-accent);
+    margin-bottom: var(--space-md);
+    padding-bottom: var(--space-sm);
+    border-bottom: 1px solid var(--color-border);
+}
+
+.archive-cat-count {
+    font-size: 0.8rem;
+    color: var(--color-muted);
+    font-weight: 400;
+    margin-left: var(--space-sm);
+}
+
+.archive-list {
+    display: flex;
+    flex-direction: column;
+}
+
+.archive-item {
+    display: flex;
+    align-items: baseline;
+    gap: var(--space-md);
+    padding: var(--space-sm) 0;
+    border-bottom: 1px dashed var(--color-border);
+    text-decoration: none;
+    color: var(--color-text);
+    transition: color 0.2s, padding-left 0.2s;
+}
+
+.archive-item:hover {
+    color: var(--color-accent);
+    padding-left: var(--space-sm);
+}
+
+.archive-item-date {
+    flex: 0 0 auto;
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    color: var(--color-muted);
+}
+
+.archive-item-title {
+    font-size: 0.95rem;
+}
+
+.archive-empty {
+    color: var(--color-muted);
+    font-size: 0.85rem;
+}

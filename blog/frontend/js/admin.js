@@ -209,8 +209,8 @@ async function renderArticleEditor(article) {
     body.innerHTML = `
         <button class="btn-secondary" id="btn-back-articles" style="margin-bottom:var(--space-sm)">← 返回列表</button>
         <div class="article-form">
-            <input type="text" id="art-title" placeholder="文章标题" value="${escapeHtml(currentEditorArticle.title || '')}" />
-            <input type="text" id="art-summary" placeholder="文章摘要（可选）" value="${escapeHtml(currentEditorArticle.summary || '')}" />
+            <input type="text" id="art-title" placeholder="文章标题" />
+            <input type="text" id="art-summary" placeholder="文章摘要（可选）" />
             <select id="art-category" style="font-size:0.9rem;padding:var(--space-sm);background:rgba(255,255,255,0.05);border:1px solid var(--color-border);color:var(--color-text);border-radius:var(--radius-sm)">
                 <option value="">无分类</option>
                 ${catOptions}
@@ -227,7 +227,7 @@ async function renderArticleEditor(article) {
                     <input type="file" id="img-file-input" accept="image/jpeg,image/png,image/gif,image/webp" style="display:none" />
                 </div>
                 <div class="md-editor-panes">
-                    <textarea id="art-content" placeholder="Markdown 内容…">${escapeHtml(currentEditorArticle.content || '')}</textarea>
+                    <textarea id="art-content" placeholder="Markdown 内容…"></textarea>
                     <div class="md-preview" id="md-preview" style="display:none"></div>
                 </div>
             </div>
@@ -237,6 +237,11 @@ async function renderArticleEditor(article) {
             </div>
         </div>
     `;
+
+    // 用 DOM 属性赋值（而非 HTML 转义插值），避免 < > & 等内容被二次转义污染
+    document.getElementById('art-title').value = currentEditorArticle.title || '';
+    document.getElementById('art-summary').value = currentEditorArticle.summary || '';
+    document.getElementById('art-content').value = currentEditorArticle.content || '';
 
     document.getElementById('btn-back-articles').addEventListener('click', () => renderArticlesTab());
 

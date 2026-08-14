@@ -24,10 +24,12 @@ public class AdminService {
 
     public List<Article> findAllArticles() {
         String sql = """
-            SELECT id, title, summary, content, cover_image,
-                   view_count, status, category_id, created_at, updated_at
-            FROM articles
-            ORDER BY created_at DESC
+            SELECT a.id, a.title, a.summary, a.content, a.cover_image,
+                   a.view_count, a.status, a.category_id, c.name AS category_name,
+                   a.created_at, a.updated_at
+            FROM articles a
+            LEFT JOIN categories c ON a.category_id = c.id
+            ORDER BY a.created_at DESC
             """;
         return jdbc.query(sql, new ArticleRowMapper());
     }
@@ -195,6 +197,7 @@ public class AdminService {
             if (!rs.wasNull()) {
                 article.setCategoryId(catId);
             }
+            article.setCategoryName(rs.getString("category_name"));
             return article;
         }
     }

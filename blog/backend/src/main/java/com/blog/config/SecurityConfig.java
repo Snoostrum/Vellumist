@@ -71,6 +71,8 @@ public class SecurityConfig {
                 .requestMatchers("/api/auth/**").permitAll()
                 .requestMatchers("/api/admin/**").authenticated()
                 .requestMatchers(HttpMethod.GET, "/api/**").permitAll()
+                // 访客发表评论不需要登录
+                .requestMatchers(HttpMethod.POST, "/api/articles/*/comments").permitAll()
                 .requestMatchers("/uploads/**").permitAll()
                 .anyRequest().permitAll()
             )

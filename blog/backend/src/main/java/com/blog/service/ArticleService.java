@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -19,34 +20,52 @@ public class ArticleService {
         this.jdbc = jdbc;
     }
 
-    public List<Article> findAll(int page, int size) {
+    private static final String SELECT_COLUMNS = """
+        SELECT a.id, a.title, a.summary, a.content, a.cover_image,
+               a.view_count, a.status, a.category_id, c.name AS category_name,
+               a.created_at, a.updated_at
+        FROM articles a
+        LEFT JOIN categories c ON a.category_id = c.id
+        """;
+
+    /** 分页查询已发布文章；categoryId 非空时按分类过滤 */
+    public List<Article> findPage(int page, int size, Long categoryId) {
         int offset = (page - 1) * size;
-        String sql = """
-            SELECT id, title, summary, content, cover_image,
-                   view_count, status, category_id, created_at, updated_at
-            FROM articles
-            WHERE status = 'PUBLISHED'
-            ORDER BY created_at DESC
-            LIMIT ? OFFSET ?
-            """;
-        return jdbc.query(sql, new ArticleRowMapper(), size, offset);
+        StringBuilder sql = new StringBuilder(SELECT_COLUMNS);
+        sql.append("WHERE a.status = 'PUBLISHED'");
+        List<Object> params = new ArrayList<>();
+        if (categoryId != null) {
+            sql.append(" AND a.category_id = ?");
+            params.add(categoryId);
+        }
+        sql.append(" ORDER BY a.created_at DESC LIMIT ? OFFSET ?");
+        params.add(size);
+        params.add(offset);
+        return jdbc.query(sql.toString(), new ArticleRowMapper(), params.toArray());
+    }
+
+    /** 已发布文章总数（可按分类过滤） */
+    public long countPublished(Long categoryId) {
+        StringBuilder sql = new StringBuilder(
+                "SELECT COUNT(*) FROM articles a WHERE a.status = 'PUBLISHED'");
+        List<Object> params = new ArrayList<>();
+        if (categoryId != null) {
+            sql.append(" AND a.category_id = ?");
+            params.add(categoryId);
+        }
+        Long result = jdbc.queryForObject(sql.toString(), Long.class, params.toArray());
+        return result != null ? result : 0L;
     }
 
     public Optional<Article> findById(Long id) {
-        String sql = """
-            SELECT id, title, summary, content, cover_image,
-                   view_count, status, category_id, created_at, updated_at
-            FROM articles WHERE id = ? AND status = 'PUBLISHED'
-            """;
+        String sql = SELECT_COLUMNS + " WHERE a.id = ? AND a.status = 'PUBLISHED'";
         List<Article> results = jdbc.query(sql, new ArticleRowMapper(), id);
         return results.isEmpty() ? Optional.empty() : Optional.of(results.get(0));
     }
 
     public Article findRandom() {
-        String sql = """
-            SELECT id, title, summary, content, cover_image,
-                   view_count, status, category_id, created_at, updated_at
-            FROM articles WHERE status = 'PUBLISHED' ORDER BY RAND() LIMIT 1
+        String sql = SELECT_COLUMNS + """
+             WHERE a.status = 'PUBLISHED' ORDER BY RAND() LIMIT 1
             """;
         List<Article> results = jdbc.query(sql, new ArticleRowMapper());
         return results.isEmpty() ? null : results.get(0);
@@ -105,6 +124,7 @@ public class ArticleService {
             if (!rs.wasNull()) {
                 article.setCategoryId(catId);
             }
+            article.setCategoryName(rs.getString("category_name"));
             return article;
         }
     }

@@ -17,7 +17,7 @@ public class ArticleServiceTest {
 
     @Test
     void shouldFindAllWithPagination() {
-        List<Article> page1 = articleService.findAll(1, 2);
+        List<Article> page1 = articleService.findPage(1, 2, null);
         assertEquals(2, page1.size());
         // 按时间倒序，第一页应该是最新的文章
         assertTrue(page1.get(0).getCreatedAt()
@@ -26,7 +26,7 @@ public class ArticleServiceTest {
 
     @Test
     void shouldFindById() {
-        List<Article> all = articleService.findAll(1, 10);
+        List<Article> all = articleService.findPage(1, 10, null);
         assertFalse(all.isEmpty());
 
         Article first = all.get(0);

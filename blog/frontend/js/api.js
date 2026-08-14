@@ -20,12 +20,29 @@ async function fetchJSON(url, options = {}) {
     }
 }
 
-function fetchArticles(page = 1, size = 5) {
-    return fetchJSON(`${API_BASE}/articles?page=${page}&size=${size}`);
+function fetchArticles(page = 1, size = 5, categoryId = null) {
+    const cat = categoryId ? `&categoryId=${categoryId}` : '';
+    return fetchJSON(`${API_BASE}/articles?page=${page}&size=${size}${cat}`);
 }
 
 function fetchArticle(id) {
     return fetchJSON(`${API_BASE}/articles/${id}`);
+}
+
+function fetchComments(articleId) {
+    return fetchJSON(`${API_BASE}/articles/${articleId}/comments`);
+}
+
+function postComment(articleId, authorName, content) {
+    return fetchJSON(`${API_BASE}/articles/${articleId}/comments`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ authorName, content }),
+    });
+}
+
+function fetchCategories() {
+    return fetchJSON(`${API_BASE}/categories`);
 }
 
 function fetchRandomArticle() {
