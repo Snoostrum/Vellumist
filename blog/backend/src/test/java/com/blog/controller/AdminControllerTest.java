@@ -45,7 +45,7 @@ class AdminControllerTest {
                         .header("Authorization", "Bearer " + token))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.code").value(200))
-                .andExpect(jsonPath("$.data.length()").value(5));
+                .andExpect(jsonPath("$.data.length()").value(10));
     }
 
     @Test

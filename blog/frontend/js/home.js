@@ -4,6 +4,7 @@ document.addEventListener("DOMContentLoaded", () => {
   renderGreeting();
   loadServerTime();
   loadMusicPlayer();
+  loadArticleWall();
   loadSiteStats();
   renderSocialLinks();
 });
@@ -82,6 +83,46 @@ function updateTimeDisplay() {
 
   // 24 小时制
   valueEl.textContent = `${dd}-${mm}-${yyyy} ${hours}:${minutes}`;
+}
+
+// ===== 文章标签墙 =====
+// 以标签样式展示文章缩略（标题），点击进入文章页
+
+function loadArticleWall() {
+  const container = document.getElementById("article-wall");
+  if (!container) return;
+
+  fetchArticles(1, 20).then((res) => {
+    if (!res || res.code !== 200 || res.data.length === 0) {
+      container.innerHTML = '<p style="color: var(--color-muted);">暂无文章</p>';
+      return;
+    }
+    let items = res.data;
+    const total = res.total || 0;
+    // 超过 20 篇再拉一页，最多展示 40 个标签
+    if (total > 20) {
+      fetchArticles(2, 20).then((res2) => {
+        if (res2 && res2.code === 200) {
+          items = items.concat(res2.data);
+        }
+        renderArticleWall(container, items);
+      });
+    } else {
+      renderArticleWall(container, items);
+    }
+  });
+}
+
+function renderArticleWall(container, articles) {
+  container.innerHTML = articles
+    .map(
+      (a, i) => `
+        <a class="wall-tag" href="article.html?id=${a.id}"
+           style="animation-delay:${i * 0.03}s"
+           title="${escapeHtml(a.title)}">${escapeHtml(a.title)}</a>
+      `,
+    )
+    .join("");
 }
 
 // ===== 音乐播放器 =====

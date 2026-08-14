@@ -26,7 +26,7 @@ public class ArticleControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.code").value(200))
                 .andExpect(jsonPath("$.data.length()").value(3))
-                .andExpect(jsonPath("$.total").value(5));
+                .andExpect(jsonPath("$.total").value(10));
     }
 
     @Test
@@ -84,7 +84,7 @@ public class ArticleControllerTest {
         mockMvc.perform(get("/api/site-stats"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.code").value(200))
-                .andExpect(jsonPath("$.data.articleCount").value(5))
+                .andExpect(jsonPath("$.data.articleCount").value(10))
                 .andExpect(jsonPath("$.data.totalWordCount").isNumber());
     }
 }

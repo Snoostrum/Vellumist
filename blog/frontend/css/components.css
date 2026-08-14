@@ -691,12 +691,13 @@
     color: var(--color-text);
 }
 
-/* === 悬浮岛式侧边栏 === */
+/* === 悬浮岛式侧边栏（缩放隐藏：常态只露出边缘，悬停弹出） === */
 .dock {
     position: fixed;
-    right: 20px;
+    right: 0;
     top: 50%;
-    transform: translateY(-50%);
+    transform: translateY(-50%) translateX(calc(100% - 12px));
+    transition: transform 0.35s ease;
     z-index: 900;
     display: flex;
     flex-direction: column;
@@ -705,9 +706,16 @@
     padding: var(--space-sm);
     background: var(--color-card);
     border: 1px solid var(--color-border);
-    border-radius: var(--radius-lg);
+    border-right: none;
+    border-radius: var(--radius-lg) 0 0 var(--radius-lg);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
+}
+
+/* 鼠标靠近（悬停到露出的边缘）或键盘聚焦时弹出 */
+.dock:hover,
+.dock:focus-within {
+    transform: translateY(-50%) translateX(0);
 }
 
 .dock-item {
@@ -766,7 +774,7 @@
     margin: var(--space-xs) 0;
 }
 
-/* 移动端：dock 收起为底部横条 */
+/* 移动端：dock 常显为底部横条（触摸设备无 hover，保持可见） */
 @media (max-width: 640px) {
     .dock {
         top: auto;
@@ -774,9 +782,40 @@
         right: 50%;
         transform: translateX(50%);
         flex-direction: row;
+        border: 1px solid var(--color-border);
+        border-radius: var(--radius-lg);
     }
     .dock-tip { display: none; }
     .dock-divider { width: 1px; height: 24px; }
+}
+
+/* === 文章标签墙 === */
+.article-wall {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-sm);
+    margin-bottom: var(--space-lg);
+}
+
+.wall-tag {
+    display: inline-block;
+    padding: var(--space-xs) var(--space-md);
+    background: var(--color-card);
+    border: 1px solid var(--color-border);
+    border-radius: 999px;
+    color: var(--color-text);
+    text-decoration: none;
+    font-size: 0.85rem;
+    opacity: 0;
+    animation: fadeInUp 0.4s ease forwards;
+    transition: color 0.2s, border-color 0.2s, background-color 0.2s, transform 0.2s;
+}
+
+.wall-tag:hover {
+    color: var(--color-accent);
+    border-color: var(--color-accent);
+    background: rgba(171, 187, 243, 0.08);
+    transform: translateY(-2px);
 }
 
 /* === 归档页 === */

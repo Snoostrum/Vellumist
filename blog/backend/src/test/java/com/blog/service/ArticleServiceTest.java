@@ -65,7 +65,7 @@ public class ArticleServiceTest {
     @Test
     void shouldReturnArticleCount() {
         int count = articleService.getArticleCount();
-        assertEquals(5, count, "种子数据应包含 5 篇文章");
+        assertEquals(10, count, "种子数据应包含 10 篇文章（含 5 篇占位）");
     }
 
     @Test
