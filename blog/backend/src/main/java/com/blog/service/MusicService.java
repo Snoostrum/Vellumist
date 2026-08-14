@@ -66,6 +66,14 @@ public class MusicService {
         jdbc.update("DELETE FROM music_recs WHERE id = ?", id);
     }
 
+    /** 编辑音乐信息（歌名/艺术家） */
+    public boolean update(Long id, String songName, String artist) {
+        int rows = jdbc.update(
+                "UPDATE music_recs SET song_name = ?, artist = ? WHERE id = ?",
+                songName, artist, id);
+        return rows > 0;
+    }
+
     private static class MusicRecRowMapper implements RowMapper<MusicRec> {
         @Override
         public MusicRec mapRow(ResultSet rs, int rowNum) throws SQLException {

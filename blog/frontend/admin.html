@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>管理后台 — 不如睡觉</title>
+    <link rel="stylesheet" href="css/variables.css" />
+    <link rel="stylesheet" href="css/layout.css" />
+    <link rel="stylesheet" href="css/admin.css" />
+    <link rel="icon" href="images/favicon.svg" type="image/svg+xml" />
+    <script src="js/vendor/marked.min.js"></script>
+  </head>
+  <body>
+    <div class="admin-page" id="admin-page">
+      <!-- 管理面板 -->
+      <header class="admin-header" id="admin-header" hidden>
+        <a href="index.html" class="admin-brand">⚙️ 管理后台</a>
+        <nav class="admin-header-nav">
+          <a href="index.html" class="admin-nav-link">← 返回博客</a>
+          <button id="btn-logout" class="admin-nav-link admin-logout">退出登录</button>
+        </nav>
+      </header>
+      <div class="admin-layout" id="admin-layout" hidden>
+        <aside class="admin-side">
+          <button class="admin-side-item active" data-tab="articles">📄 文章</button>
+          <button class="admin-side-item" data-tab="music">🎵 音乐</button>
+          <button class="admin-side-item" data-tab="categories">📁 分类</button>
+          <button class="admin-side-item" data-tab="tags">🏷️ 标签</button>
+          <button class="admin-side-item" data-tab="comments">💬 评论</button>
+        </aside>
+        <main class="admin-main" id="admin-main"></main>
+      </div>
+
+      <!-- 登录区 -->
+      <div class="login-area" id="login-area" hidden>
+        <div class="login-card">
+          <div class="login-card-title">🔐 管理员登录</div>
+          <form class="login-form" id="login-form">
+            <input type="text" id="login-username" placeholder="用户名" autocomplete="username" />
+            <input type="password" id="login-password" placeholder="密码" autocomplete="current-password" />
+            <p class="login-error" id="login-error" style="display:none"></p>
+            <button type="submit" class="btn">登录</button>
+          </form>
+          <a href="index.html" class="login-back">← 返回博客首页</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="admin-toast" id="admin-toast"></div>
+
+    <script src="js/api.js"></script>
+    <script src="js/markdown.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/admin.js"></script>
+  </body>
+</html>

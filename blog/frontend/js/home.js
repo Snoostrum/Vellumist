@@ -1,16 +1,8 @@
-const PAGE_SIZE = 5;
-
-// 从 URL 读取初始分类筛选（?category=分类ID）
-const urlParams = new URLSearchParams(window.location.search);
-let currentCategory = urlParams.get('category') ? parseInt(urlParams.get('category')) : null;
-let currentPage = 1;
+// ===== home.js — 首页：时间 / 音乐 / 社交 / 悬浮岛导航 =====
 
 document.addEventListener("DOMContentLoaded", () => {
   renderGreeting();
   loadServerTime();
-  loadRandomArticle();
-  loadCategories();
-  loadArticles(1);
   loadMusicPlayer();
   loadSiteStats();
   renderSocialLinks();
@@ -90,104 +82,6 @@ function updateTimeDisplay() {
 
   // 24 小时制
   valueEl.textContent = `${dd}-${mm}-${yyyy} ${hours}:${minutes}`;
-}
-
-function loadRandomArticle() {
-  fetchRandomArticle().then((res) => {
-    const container = document.getElementById("random-article");
-    if (!container) return;
-    if (res && res.code === 200 && res.data) {
-      container.innerHTML = renderArticleCard(res.data, true);
-    } else {
-      container.innerHTML =
-        '<p style="color: var(--color-muted);">暂无文章</p>';
-    }
-  });
-}
-
-// ===== 分类筛选 =====
-
-function loadCategories() {
-  fetchCategories().then((res) => {
-    const container = document.getElementById("category-filter");
-    if (!container) return;
-    if (!res || res.code !== 200 || !res.data || res.data.length === 0) {
-      container.style.display = "none";
-      return;
-    }
-
-    const allActive = currentCategory === null ? "active" : "";
-    let html = `<a class="cat-chip ${allActive}" href="index.html">全部</a>`;
-    html += res.data
-      .map((c) => {
-        const active = currentCategory === c.id ? "active" : "";
-        return `<a class="cat-chip ${active}" href="index.html?category=${c.id}">${escapeHtml(c.name)} <span class="cat-count">${c.articleCount}</span></a>`;
-      })
-      .join("");
-    container.innerHTML = html;
-  });
-}
-
-// ===== 文章列表 + 分页 =====
-
-function loadArticles(page) {
-  currentPage = page;
-  fetchArticles(page, PAGE_SIZE, currentCategory).then((res) => {
-    const container = document.getElementById("article-list");
-    if (!container) return;
-
-    if (res && res.code === 200 && res.data.length > 0) {
-      container.innerHTML = res.data
-        .map((a) => renderArticleCard(a, false))
-        .join("");
-      // stagger animation
-      const cards = container.querySelectorAll(".card-stagger");
-      cards.forEach((card, i) => {
-        card.style.animationDelay = `${i * 0.08}s`;
-      });
-    } else {
-      container.innerHTML =
-        '<p style="color: var(--color-muted);">该分类下暂无文章</p>';
-    }
-
-    const total = res ? res.total || 0 : 0;
-    renderPagination(total, page, PAGE_SIZE);
-  });
-}
-
-function renderPagination(total, page, size) {
-  const el = document.getElementById("article-pagination");
-  if (!el) return;
-  const pages = Math.max(1, Math.ceil(total / size));
-  if (pages <= 1) {
-    el.innerHTML = "";
-    return;
-  }
-
-  const btn = (label, target, disabled, active) => `
-    <button class="page-btn ${active ? "active" : ""}" ${disabled ? "disabled" : ""} data-page="${target}">${label}</button>`;
-
-  let html = '<div class="pagination">';
-  html += btn("← 上一页", page - 1, page <= 1, false);
-  // 最多显示 7 个页码，当前页居中
-  let start = Math.max(1, page - 3);
-  let end = Math.min(pages, start + 6);
-  start = Math.max(1, end - 6);
-  for (let i = start; i <= end; i++) {
-    html += btn(String(i), i, false, i === page);
-  }
-  html += btn("下一页 →", page + 1, page >= pages, false);
-  html += `<span class="page-info">共 ${total} 篇</span>`;
-  html += "</div>";
-  el.innerHTML = html;
-
-  el.querySelectorAll(".page-btn").forEach((b) => {
-    if (b.disabled) return;
-    b.addEventListener("click", () => {
-      loadArticles(parseInt(b.dataset.page));
-      window.scrollTo({ top: 0, behavior: "smooth" });
-    });
-  });
 }
 
 // ===== 音乐播放器 =====
@@ -445,25 +339,4 @@ function renderSocialLinks() {
       (l) => `<a href="${l.url}" target="_blank" rel="noopener">${l.name}</a>`,
     )
     .join("");
-}
-
-function renderArticleCard(article, isRandom) {
-  const date = new Date(article.createdAt).toLocaleDateString("zh-CN", {
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-  });
-  const tagClass = isRandom ? "" : "card-stagger";
-  const categoryTag = article.categoryName
-    ? `<a class="card-category" href="index.html?category=${article.categoryId}">${escapeHtml(article.categoryName)}</a>`
-    : "";
-  return `
-        <a href="article.html?id=${article.id}"
-           class="card article-card ${tagClass}"
-           style="text-decoration: none;">
-            <div class="article-date">${date}${categoryTag}</div>
-            <div class="article-title">${escapeHtml(article.title)}</div>
-            ${article.summary ? `<div class="article-summary">${escapeHtml(article.summary)}</div>` : ""}
-        </a>
-    `;
 }

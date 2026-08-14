@@ -3,12 +3,12 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="文章详情 — 不如睡觉" />
     <title>文章 — 不如睡觉</title>
     <link rel="stylesheet" href="css/variables.css" />
     <link rel="stylesheet" href="css/layout.css" />
     <link rel="stylesheet" href="css/components.css" />
     <link rel="stylesheet" href="css/animations.css" />
-    <link rel="stylesheet" href="css/admin.css" />
     <link rel="icon" href="images/favicon.svg" type="image/svg+xml" />
     <script src="js/vendor/marked.min.js"></script>
   </head>
@@ -17,13 +17,13 @@
     <div class="topbar">
       <a href="index.html" class="topbar-brand">不如睡觉</a>
       <nav class="topbar-nav">
-        <a href="archive.html">📚 归档</a>
+        <a href="articles.html">📄 文章</a>
       </nav>
     </div>
 
     <!-- 主内容区 -->
     <main class="main-content">
-      <a href="index.html" class="back-link">← 返回首页</a>
+      <a href="articles.html" class="back-link">← 返回文章列表</a>
       <article class="article-detail fade-section" id="article-detail"></article>
 
       <!-- 评论区 -->
@@ -53,10 +53,12 @@
       </section>
     </main>
 
+    <!-- 悬浮岛式侧边栏 -->
+    <nav class="dock" id="dock" aria-label="功能导航"></nav>
+
     <script src="js/api.js"></script>
     <script src="js/markdown.js"></script>
-    <script src="js/auth.js"></script>
-    <script src="js/admin.js"></script>
+    <script src="js/dock.js"></script>
     <script src="js/article.js"></script>
   </body>
 </html>

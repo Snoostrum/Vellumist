@@ -1,126 +1,80 @@
-// ===== admin.js — 后台管理抽屉面板 =====
+// ===== admin.js — 独立管理后台（admin.html）=====
+// 访客页面不再注入任何管理代码；本文件只运行在 admin.html
 
 document.addEventListener('DOMContentLoaded', () => {
-    injectDrawer();
+    initAdminPage();
 });
 
-// ===== DOM 注入 =====
+// 登录态过期时（authFetch 401/403）回到登录界面
+window.onAuthExpired = () => {
+    renderLoginPage('登录已过期，请重新登录');
+};
 
-function injectDrawer() {
-    const html = `
-        <button class="admin-trigger" id="admin-trigger" title="管理">⚙️</button>
-        <div class="admin-overlay" id="admin-overlay"></div>
-        <div class="admin-drawer" id="admin-drawer">
-            <div class="drawer-header">
-                <h3>管理面板</h3>
-                <button class="drawer-close" id="drawer-close">✕</button>
-            </div>
-            <div class="drawer-tabs" id="drawer-tabs">
-                <button class="drawer-tab active" data-tab="articles">📄 文章</button>
-                <button class="drawer-tab" data-tab="categories">📁 分类</button>
-                <button class="drawer-tab" data-tab="tags">🏷️ 标签</button>
-                <button class="drawer-tab" data-tab="music">🎵 音乐</button>
-                <button class="drawer-tab" data-tab="comments">💬 评论</button>
-            </div>
-            <div class="drawer-body" id="drawer-body"></div>
-        </div>
-        <div class="admin-toast" id="admin-toast"></div>
-    `;
-    const wrapper = document.createElement('div');
-    wrapper.innerHTML = html;
-
-    // 把触发按钮插入 topbar
-    const topbar = document.querySelector('.topbar');
-    if (topbar) {
-        topbar.appendChild(wrapper.querySelector('#admin-trigger'));
-    }
-    // 其余元素插入 body
-    document.body.appendChild(wrapper.querySelector('#admin-overlay'));
-    document.body.appendChild(wrapper.querySelector('#admin-drawer'));
-    document.body.appendChild(wrapper.querySelector('#admin-toast'));
-
-    bindEvents();
-}
-
-function bindEvents() {
-    const trigger = document.getElementById('admin-trigger');
-    const close = document.getElementById('drawer-close');
-    const overlay = document.getElementById('admin-overlay');
-
-    trigger.addEventListener('click', toggleDrawer);
-    close.addEventListener('click', closeDrawer);
-    overlay.addEventListener('click', closeDrawer);
-
-    document.getElementById('drawer-tabs').addEventListener('click', (e) => {
-        if (e.target.classList.contains('drawer-tab')) {
-            switchTab(e.target.dataset.tab);
-        }
-    });
-}
-
-function toggleDrawer() {
-    if (!isLoggedIn()) {
-        showLoginOverlay();
-        return;
-    }
-    const drawer = document.getElementById('admin-drawer');
-    const overlay = document.getElementById('admin-overlay');
-    const isOpen = drawer.classList.contains('open');
-    if (isOpen) {
-        closeDrawer();
-    } else {
-        openDrawer();
-    }
-}
-
-function openDrawer() {
-    document.getElementById('admin-drawer').classList.add('open');
-    document.getElementById('admin-overlay').classList.add('open');
+function initAdminPage() {
     if (isLoggedIn()) {
-        switchTab('articles');
+        renderPanel();
+    } else {
+        renderLoginPage();
     }
 }
 
-function closeDrawer() {
-    document.getElementById('admin-drawer').classList.remove('open');
-    document.getElementById('admin-overlay').classList.remove('open');
-}
+// ===== 登录 =====
 
-// ===== 登录表单 =====
+function renderLoginPage(msg) {
+    document.getElementById('admin-header').hidden = true;
+    document.getElementById('admin-layout').hidden = true;
+    const area = document.getElementById('login-area');
+    area.hidden = false;
 
-function showLoginOverlay() {
-    openDrawer();
-    const body = document.getElementById('drawer-body');
-    body.innerHTML = `
-        <form class="login-form" id="login-form">
-            <h3 style="margin:0">🔐 管理员登录</h3>
-            <input type="text" id="login-username" placeholder="用户名" autocomplete="username" />
-            <input type="password" id="login-password" placeholder="密码" autocomplete="current-password" />
-            <p class="login-error" id="login-error" style="display:none"></p>
-            <button type="submit" class="btn">登录</button>
-        </form>
-    `;
-    document.getElementById('login-form').addEventListener('submit', async (e) => {
+    const errorEl = document.getElementById('login-error');
+    if (msg) {
+        errorEl.textContent = msg;
+        errorEl.style.display = 'block';
+    } else {
+        errorEl.style.display = 'none';
+    }
+
+    // 绑定登录表单（避免重复绑定）
+    const form = document.getElementById('login-form');
+    form.onsubmit = async (e) => {
         e.preventDefault();
         const username = document.getElementById('login-username').value;
         const password = document.getElementById('login-password').value;
-        const errorEl = document.getElementById('login-error');
-        const success = await login(username, password);
-        if (success) {
-            toast('登录成功');
-            switchTab('articles');
+        const ok = await login(username, password);
+        if (ok) {
+            renderPanel();
         } else {
             errorEl.textContent = '用户名或密码错误';
             errorEl.style.display = 'block';
         }
-    });
+    };
 }
 
-// ===== Tab 切换 =====
+// ===== 管理面板 =====
+
+function renderPanel() {
+    document.getElementById('login-area').hidden = true;
+    document.getElementById('admin-header').hidden = false;
+    document.getElementById('admin-layout').hidden = false;
+
+    document.getElementById('btn-logout').onclick = () => {
+        logout();
+        renderLoginPage();
+    };
+
+    // 侧边栏 tab 切换（替换式绑定，避免重复）
+    const side = document.querySelector('.admin-side');
+    side.onclick = (e) => {
+        const btn = e.target.closest('.admin-side-item');
+        if (btn) switchTab(btn.dataset.tab);
+    };
+
+    switchTab('articles');
+}
 
 function switchTab(tab) {
-    document.querySelectorAll('.drawer-tab').forEach(t => {
-        t.classList.toggle('active', t.dataset.tab === tab);
+    document.querySelectorAll('.admin-side-item').forEach(b => {
+        b.classList.toggle('active', b.dataset.tab === tab);
     });
     switch (tab) {
         case 'articles':    renderArticlesTab();    break;
@@ -147,7 +101,7 @@ function toast(msg, isError) {
 // ===== 文章管理 =====
 
 async function renderArticlesTab() {
-    const body = document.getElementById('drawer-body');
+    const body = document.getElementById('admin-main');
     body.innerHTML = '<p style="color:var(--color-muted)">加载中…</p>';
 
     const res = await authFetch(API_BASE + '/admin/articles');
@@ -196,7 +150,7 @@ let currentEditorArticle = null;
 
 async function renderArticleEditor(article) {
     currentEditorArticle = article || { title: '', summary: '', content: '', status: 'DRAFT', categoryId: null };
-    const body = document.getElementById('drawer-body');
+    const body = document.getElementById('admin-main');
 
     // 加载分类列表
     const catRes = await authFetch(API_BASE + '/admin/categories');
@@ -329,7 +283,7 @@ async function renderArticleEditor(article) {
 // ===== 分类管理 =====
 
 async function renderCategoriesTab() {
-    const body = document.getElementById('drawer-body');
+    const body = document.getElementById('admin-main');
     body.innerHTML = '<p style="color:var(--color-muted)">加载中…</p>';
 
     const res = await authFetch(API_BASE + '/admin/categories');
@@ -398,7 +352,7 @@ async function renderCategoriesTab() {
 // ===== 标签管理 =====
 
 async function renderTagsTab() {
-    const body = document.getElementById('drawer-body');
+    const body = document.getElementById('admin-main');
     body.innerHTML = '<p style="color:var(--color-muted)">加载中…</p>';
 
     const res = await authFetch(API_BASE + '/admin/tags');
@@ -448,7 +402,7 @@ async function renderTagsTab() {
 // ===== 评论管理 =====
 
 async function renderCommentsTab() {
-    const body = document.getElementById('drawer-body');
+    const body = document.getElementById('admin-main');
     body.innerHTML = '<p style="color:var(--color-muted)">加载中…</p>';
 
     const res = await authFetch(API_BASE + '/admin/comments');
@@ -501,10 +455,10 @@ async function renderCommentsTab() {
     });
 }
 
-// ===== 音乐管理 =====
+// ===== 音乐管理（上传 + 编辑） =====
 
 async function renderMusicTab() {
-    const body = document.getElementById('drawer-body');
+    const body = document.getElementById('admin-main');
     body.innerHTML = '<p style="color:var(--color-muted)">加载中…</p>';
 
     const res = await authFetch(API_BASE + '/admin/music');
@@ -518,9 +472,9 @@ async function renderMusicTab() {
         <div class="article-form">
             <input type="text" id="music-name" placeholder="歌曲名称" />
             <input type="text" id="music-artist" placeholder="艺术家" />
-            <label style="color:var(--color-muted);font-size:0.85rem">音频文件 (mp3/wav/flac, ≤20MB)</label>
+            <label style="color:var(--color-muted);font-size:0.85rem">音频文件 (mp3/wav/flac/ogg/m4a, ≤20MB)</label>
             <input type="file" id="music-file" accept="audio/*" />
-            <label style="color:var(--color-muted);font-size:0.85rem">封面图片</label>
+            <label style="color:var(--color-muted);font-size:0.85rem">封面图片 (jpg/png/gif/webp)</label>
             <input type="file" id="music-cover" accept="image/*" />
             <button class="btn-primary" id="btn-upload-music">上传</button>
             <span id="music-upload-status" style="color:var(--color-muted);font-size:0.85rem"></span>
@@ -531,7 +485,10 @@ async function renderMusicTab() {
     html += res.data.map(m => `
         <div class="admin-list-item">
             <span class="item-title">${escapeHtml(m.songName)} — ${escapeHtml(m.artist || '未知')}</span>
-            <button class="del-music-btn" data-id="${m.id}">✕</button>
+            <span>
+                <button class="edit-music-btn" data-id="${m.id}" data-name="${escapeHtml(m.songName)}" data-artist="${escapeHtml(m.artist || '')}">✎</button>
+                <button class="del-music-btn" data-id="${m.id}">✕</button>
+            </span>
         </div>
     `).join('') || '<p style="color:var(--color-muted)">暂无音乐</p>';
 
@@ -545,7 +502,7 @@ async function renderMusicTab() {
         const status = document.getElementById('music-upload-status');
 
         if (!songName || !file || !cover) {
-            status.textContent = '请填写所有字段并选择文件';
+            status.textContent = '请填写歌曲名称并选择音频和封面';
             return;
         }
         if (file.size > 20 * 1024 * 1024) {
@@ -571,6 +528,26 @@ async function renderMusicTab() {
         } else {
             status.textContent = uploadRes ? uploadRes.message : '上传失败';
         }
+    });
+
+    // 编辑音乐信息（歌名/艺术家）
+    body.querySelectorAll('.edit-music-btn').forEach(btn => {
+        btn.addEventListener('click', async () => {
+            const id = btn.dataset.id;
+            const newName = prompt('新歌名', btn.dataset.name);
+            if (!newName || !newName.trim()) return;
+            const newArtist = prompt('新艺术家（可留空）', btn.dataset.artist) || '';
+            const res = await authFetch(API_BASE + '/admin/music/' + id, {
+                method: 'PUT',
+                body: JSON.stringify({ songName: newName.trim(), artist: newArtist.trim() }),
+            });
+            if (res && res.code === 200) {
+                toast('已更新');
+                renderMusicTab();
+            } else {
+                toast(res ? res.message : '更新失败', true);
+            }
+        });
     });
 
     body.querySelectorAll('.del-music-btn').forEach(btn => {

@@ -177,6 +177,21 @@ public class AdminController {
         }
     }
 
+    @PutMapping("/music/{id}")
+    public ApiResponse<Void> updateMusic(@PathVariable Long id,
+                                         @RequestBody Map<String, String> body) {
+        String songName = body.get("songName");
+        String artist = body.get("artist");
+        if (songName == null || songName.trim().isEmpty()) {
+            return ApiResponse.error(400, "歌曲名称不能为空");
+        }
+        boolean updated = musicService.update(id, songName.trim(), artist == null ? "" : artist.trim());
+        if (!updated) {
+            return ApiResponse.error(404, "音乐不存在");
+        }
+        return ApiResponse.ok(null);
+    }
+
     @DeleteMapping("/music/{id}")
     public ApiResponse<Void> deleteMusic(@PathVariable Long id) {
         musicService.delete(id);

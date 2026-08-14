@@ -683,6 +683,102 @@
     background: rgba(171, 187, 243, 0.08);
 }
 
+/* === 列表页标题 === */
+.page-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: var(--space-lg);
+    color: var(--color-text);
+}
+
+/* === 悬浮岛式侧边栏 === */
+.dock {
+    position: fixed;
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 900;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-xs);
+    padding: var(--space-sm);
+    background: var(--color-card);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+}
+
+.dock-item {
+    position: relative;
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    background: none;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    font-size: 1.25rem;
+    color: var(--color-text);
+    transition: background-color 0.2s, transform 0.2s;
+}
+
+.dock-item:hover {
+    background: var(--color-card-hover);
+    transform: scale(1.1);
+}
+
+.dock-link {
+    text-decoration: none;
+    color: inherit;
+    display: flex;
+}
+
+.dock-tip {
+    position: absolute;
+    right: calc(100% + 10px);
+    top: 50%;
+    transform: translateY(-50%) translateX(4px);
+    white-space: nowrap;
+    font-size: 0.8rem;
+    color: var(--color-text);
+    background: var(--color-card);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    padding: 4px 10px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s, transform 0.2s;
+}
+
+.dock-item:hover .dock-tip {
+    opacity: 1;
+    transform: translateY(-50%) translateX(0);
+}
+
+.dock-divider {
+    width: 24px;
+    height: 1px;
+    background: var(--color-border);
+    margin: var(--space-xs) 0;
+}
+
+/* 移动端：dock 收起为底部横条 */
+@media (max-width: 640px) {
+    .dock {
+        top: auto;
+        bottom: 16px;
+        right: 50%;
+        transform: translateX(50%);
+        flex-direction: row;
+    }
+    .dock-tip { display: none; }
+    .dock-divider { width: 1px; height: 24px; }
+}
+
 /* === 归档页 === */
 .archive-title {
     font-size: 1.5rem;

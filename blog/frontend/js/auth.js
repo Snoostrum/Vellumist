@@ -53,7 +53,10 @@ async function authFetch(url, options = {}) {
         const res = await fetch(url, { ...options, headers, credentials: 'include' });
         if (res.status === 401 || res.status === 403) {
             logout();
-            showLoginOverlay();
+            // 由当前页面决定过期后的行为（管理后台：回到登录页）
+            if (typeof window.onAuthExpired === 'function') {
+                window.onAuthExpired();
+            }
             return null;
         }
         if (!res.ok) {

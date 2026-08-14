@@ -172,4 +172,60 @@ class AdminControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.code").value(200));
     }
+
+    // ===== 音乐编辑 =====
+
+    @Test
+    @Order(12)
+    void shouldUpdateMusicInfo() throws Exception {
+        // 先创建一个音乐记录（无文件也可入库）
+        org.springframework.mock.web.MockMultipartFile file =
+                new org.springframework.mock.web.MockMultipartFile(
+                        "file", "test.mp3", "audio/mpeg",
+                        new byte[]{(byte) 0x49, (byte) 0x44, (byte) 0x33, 0, 0, 0, 0, 0, 0, 0, 0, 0});
+        org.springframework.mock.web.MockMultipartFile cover =
+                new org.springframework.mock.web.MockMultipartFile(
+                        "cover", "c.png", "image/png",
+                        new byte[]{(byte) 0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A, 0, 0, 0, 0});
+        mockMvc.perform(multipart("/api/admin/music")
+                        .file(file).file(cover)
+                        .param("songName", "测试歌曲")
+                        .param("artist", "歌手A")
+                        .header("Authorization", "Bearer " + token))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.code").value(200));
+
+        // 编辑歌名/艺术家
+        String body = "{\"songName\":\"新歌名\",\"artist\":\"歌手B\"}";
+        mockMvc.perform(put("/api/admin/music/1")
+                        .header("Authorization", "Bearer " + token)
+                        .contentType("application/json")
+                        .content(body))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.code").value(200));
+    }
+
+    @Test
+    @Order(13)
+    void shouldRejectUpdateMissingMusic() throws Exception {
+        String body = "{\"songName\":\"不存在\"}";
+        mockMvc.perform(put("/api/admin/music/99999")
+                        .header("Authorization", "Bearer " + token)
+                        .contentType("application/json")
+                        .content(body))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.code").value(404));
+    }
+
+    @Test
+    @Order(14)
+    void shouldRejectUpdateEmptyName() throws Exception {
+        String body = "{\"songName\":\"   \"}";
+        mockMvc.perform(put("/api/admin/music/1")
+                        .header("Authorization", "Bearer " + token)
+                        .contentType("application/json")
+                        .content(body))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.code").value(400));
+    }
 }
