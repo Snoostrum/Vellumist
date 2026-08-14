@@ -68,6 +68,8 @@ public class SecurityConfig {
             .sessionManagement(session ->
                 session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
+                // 修改密码必须登录（注意：要先于 /api/auth/** 的通配放行声明）
+                .requestMatchers(HttpMethod.PUT, "/api/auth/change-password").authenticated()
                 .requestMatchers("/api/auth/**").permitAll()
                 .requestMatchers("/api/admin/**").authenticated()
                 .requestMatchers(HttpMethod.GET, "/api/**").permitAll()

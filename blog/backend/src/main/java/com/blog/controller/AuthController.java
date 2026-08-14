@@ -85,6 +85,39 @@ public class AuthController {
         return ApiResponse.ok(null);
     }
 
+    /** 修改密码（需登录）：校验原密码，更新为新密码 */
+    @PutMapping("/change-password")
+    public ApiResponse<Void> changePassword(@RequestBody Map<String, String> body,
+                                            Authentication authentication) {
+        if (authentication == null || authentication.getName() == null) {
+            return ApiResponse.error(401, "未登录");
+        }
+        String username = authentication.getName();
+        String oldPassword = body.getOrDefault("oldPassword", "");
+        String newPassword = body.getOrDefault("newPassword", "");
+
+        // 校验原密码
+        var results = jdbc.query(
+                "SELECT password FROM users WHERE username = ?",
+                (rs, rowNum) -> rs.getString("password"),
+                username);
+        if (results.isEmpty() || !passwordEncoder.matches(oldPassword, results.get(0))) {
+            return ApiResponse.error(401, "原密码错误");
+        }
+
+        // 新密码规则：至少 8 位
+        if (newPassword.length() < 8) {
+            return ApiResponse.error(400, "新密码至少 8 位");
+        }
+        if (oldPassword.equals(newPassword)) {
+            return ApiResponse.error(400, "新密码不能与原密码相同");
+        }
+
+        jdbc.update("UPDATE users SET password = ? WHERE username = ?",
+                passwordEncoder.encode(newPassword), username);
+        return ApiResponse.ok(null);
+    }
+
     // ===== 内部工具 =====
 
     private void setTokenCookie(HttpServletResponse response, String token) {

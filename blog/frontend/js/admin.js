@@ -62,6 +62,10 @@ function renderPanel() {
         renderLoginPage();
     };
 
+    document.getElementById('btn-change-password').onclick = () => {
+        renderChangePasswordForm();
+    };
+
     // 侧边栏 tab 切换（替换式绑定，避免重复）
     const side = document.querySelector('.admin-side');
     side.onclick = (e) => {
@@ -70,6 +74,64 @@ function renderPanel() {
     };
 
     switchTab('articles');
+}
+
+// ===== 修改密码 =====
+
+function renderChangePasswordForm() {
+    const body = document.getElementById('admin-main');
+    body.innerHTML = `
+        <button class="btn-secondary" id="btn-back-password" style="margin-bottom:var(--space-sm)">← 返回管理面板</button>
+        <div class="article-form" style="max-width:420px">
+            <h4 style="margin:0">🔑 修改密码</h4>
+            <input type="password" id="pw-old" placeholder="原密码" autocomplete="current-password" />
+            <input type="password" id="pw-new" placeholder="新密码（至少 8 位）" autocomplete="new-password" />
+            <input type="password" id="pw-new2" placeholder="确认新密码" autocomplete="new-password" />
+            <span id="pw-status" style="color:var(--color-muted);font-size:0.85rem"></span>
+            <div style="display:flex;gap:var(--space-sm)">
+                <button class="btn-primary" id="btn-save-password">确认修改</button>
+            </div>
+        </div>
+    `;
+
+    document.getElementById('btn-back-password').onclick = () => switchTab('articles');
+
+    document.getElementById('btn-save-password').onclick = async () => {
+        const oldPw = document.getElementById('pw-old').value;
+        const newPw = document.getElementById('pw-new').value;
+        const newPw2 = document.getElementById('pw-new2').value;
+        const status = document.getElementById('pw-status');
+
+        if (!oldPw || !newPw) {
+            status.textContent = '请填写完整';
+            status.style.color = '#e55';
+            return;
+        }
+        if (newPw.length < 8) {
+            status.textContent = '新密码至少 8 位';
+            status.style.color = '#e55';
+            return;
+        }
+        if (newPw !== newPw2) {
+            status.textContent = '两次输入的新密码不一致';
+            status.style.color = '#e55';
+            return;
+        }
+
+        const res = await authFetch(API_BASE + '/auth/change-password', {
+            method: 'PUT',
+            body: JSON.stringify({ oldPassword: oldPw, newPassword: newPw }),
+        });
+
+        if (res && res.code === 200) {
+            toast('密码已修改，请用新密码重新登录');
+            logout();
+            setTimeout(() => renderLoginPage('密码已修改，请用新密码重新登录'), 300);
+        } else {
+            status.textContent = res && res.message ? res.message : '修改失败';
+            status.style.color = '#e55';
+        }
+    };
 }
 
 function switchTab(tab) {
