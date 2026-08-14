@@ -22,36 +22,15 @@ function loadArticle(id) {
                 year: 'numeric', month: 'long', day: 'numeric'
             });
 
-            document.title = `${article.title} — lvy-neko`;
+            document.title = `${article.title} — 不如睡觉`;
 
             container.innerHTML = `
                 <h1 class="article-title">${escapeHtml(article.title)}</h1>
                 <div class="article-meta">📅 ${date} · 👁 ${article.viewCount} 次阅读</div>
-                <div class="article-content">${simpleMarkdown(article.content)}</div>
+                <div class="article-content">${renderMarkdown(article.content)}</div>
             `;
         } else {
             container.innerHTML = '<p style="color: var(--color-muted);">文章不存在</p>';
         }
     });
-}
-
-function simpleMarkdown(md) {
-    if (!md) return '';
-    // 1. Escape HTML first to prevent XSS
-    let html = escapeHtml(md);
-    // 2. Convert markdown patterns to HTML tags
-    html = html
-        // 代码块 (```...```)
-        .replace(/```(\w*)\n([\s\S]*?)```/g, '<pre><code>$2</code></pre>')
-        // 行内代码 (`...`)
-        .replace(/`([^`]+)`/g, '<code>$1</code>')
-        // 标题 (## ...)
-        .replace(/^### (.+)$/gm, '<h3>$1</h3>')
-        .replace(/^## (.+)$/gm, '<h2>$1</h2>')
-        // 段落（双换行分隔）
-        .replace(/\n\n/g, '</p><p>')
-        // 单换行 → <br>
-        .replace(/\n/g, '<br>');
-    html = '<p>' + html + '</p>';
-    return html;
 }
