@@ -19,3 +19,6 @@ blog/backend/uploads/
 
 # 本地敏感配置
 .env
+
+# Claude Code 临时 worktree，不入库
+.claude/worktrees/
