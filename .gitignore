@@ -22,3 +22,6 @@ blog/backend/uploads/
 
 # Claude Code 临时 worktree，不入库
 .claude/worktrees/
+
+# 本地笔记，含明文密码，不入库
+改动注意事项.txt
