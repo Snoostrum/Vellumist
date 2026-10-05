@@ -54,8 +54,9 @@ VALUES
 
 -- 音乐数据：上传文件后自动填充，初始为空
 
--- 默认管理员账号：admin（初始密码见部署文档/交付说明，部署后请立即修改）
-INSERT INTO users (username, password) VALUES ('admin', 'BCRYPT_REDACTED');
+-- 管理员账号改由 AdminBootstrapRunner 创建（生产/开发/测试同一条路径）
+-- 初始密码来自 blog.admin.init-password：生产用环境变量 BLOG_ADMIN_PASSWORD，测试见 AuthControllerTest
+-- （原先这里有一条写死 bcrypt 哈希的 INSERT，已删除：仓库公开，不保留任何形式的凭据）
 
 INSERT INTO categories (name, slug) VALUES
 ('技术', 'tech'),

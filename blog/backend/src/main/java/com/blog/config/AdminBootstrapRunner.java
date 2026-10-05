@@ -11,11 +11,11 @@ import org.springframework.stereotype.Component;
 import java.security.SecureRandom;
 
 /**
- * 生产环境管理员引导：
- * 当 users 表为空（生产库不执行 data.sql，因此没有账号）时，
- * 启动时自动创建初始管理员 admin，密码取环境变量 BLOG_ADMIN_PASSWORD；
- * 未设置则生成随机密码并打印到日志（仅首次启动）。
- * 开发环境（H2 + data.sql 已内置 admin）不会触发。
+ * 管理员引导：
+ * 当 users 表为空时，启动时自动创建初始管理员 admin，密码取 blog.admin.init-password
+ * （生产用环境变量 BLOG_ADMIN_PASSWORD 注入）；未设置则生成随机密码并打印到日志（仅首次启动）。
+ * 注意：data.sql 已不再内置 admin，因此开发/测试环境同样走这条路径 ——
+ * 测试在 @SpringBootTest 的 properties 里指定密码，见 AuthControllerTest。
  */
 @Component
 public class AdminBootstrapRunner implements CommandLineRunner {

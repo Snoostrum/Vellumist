@@ -10,8 +10,12 @@ import org.springframework.test.web.servlet.MockMvc;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+// data.sql 已不再内置 admin（改由 AdminBootstrapRunner 创建），
+// 这里显式给出测试用的初始密码，供下面几个用例登录。
+// 注意：这是仅供测试的假密码，仓库公开，任何真实凭据都不要写进代码。
 @SpringBootTest(properties = {
-    "spring.datasource.url=jdbc:h2:mem:blog;DB_CLOSE_DELAY=0"
+    "spring.datasource.url=jdbc:h2:mem:blog;DB_CLOSE_DELAY=0",
+    "blog.admin.init-password=Test-Only-Admin-Pw-2026"
 })
 @AutoConfigureMockMvc
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
