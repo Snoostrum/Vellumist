@@ -1,18 +1,19 @@
-# Task 1: Spring Boot 项目骨架 — Report
+# Task 1 Report: 添加依赖
 
 ## Status: DONE
 
 ## Commits
-- `697dfa5` — chore: init Spring Boot 3.5 project with CORS config
+- `251b35596e2ba971fc821a9261c62ec7e3325797` — build: add Spring Security and jjwt dependencies
 
-## Summary
-- Created `blog/backend/` with full Spring Boot 3.5.0 project skeleton
-- 4 source files: `pom.xml`, `application.properties`, `BlogApplication.java`, `WebConfig.java`
-- Copied `mvnw`, `mvnw.cmd`, `.mvn/` from `node/hello-spring/`
-- Compiled successfully with `./mvnw compile -q` (using `JAVA_HOME` pointing to JDK 25)
-- Added `.gitignore` for `target/`, IDE, and OS files
-- 8 files committed, 598 insertions
+## Test result
+- `mvn dependency:resolve -q` completed with **BUILD SUCCESS** (no errors, no warnings)
 
-## Concerns
-- `JAVA_HOME` defaults to JDK 8 in this environment; compiled with explicit `JAVA_HOME="/c/Program Files/Java/jdk-25"` — this should be noted for future Maven commands
-- `target/` was accidentally committed on first attempt; amended to remove it
+## Details
+- **Modified:** `blog/backend/pom.xml`
+- **Added 4 dependencies:**
+  1. `spring-boot-starter-security` (version managed by Spring Boot BOM 3.5.0)
+  2. `jjwt-api` 0.12.6
+  3. `jjwt-impl` 0.12.6 (runtime scope)
+  4. `jjwt-jackson` 0.12.6 (runtime scope)
+- Inserted after `spring-boot-starter-test`, before `</dependencies>`
+- No other files changed
