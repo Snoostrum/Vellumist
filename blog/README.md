@@ -85,11 +85,11 @@ ssh user@server "ln -s /etc/nginx/sites-available/blog /etc/nginx/sites-enabled/
 
 - 后端：`cd blog/backend && ./mvnw spring-boot:run`（默认 8080，H2 内存库 + 示例数据）
 - 前端：任意静态服务器托管 `blog/frontend`，建议端口 8081（前端会自动把 API 指向 `http://localhost:8080/api`）
-- 开发库内置账号：`admin` / 见 `data.sql` 对应哈希的明文（交付时另行说明）
+- 开发库内置账号：首次启动且 `users` 表为空时由 `AdminBootstrapRunner` 创建 `admin`，密码取环境变量 `BLOG_ADMIN_PASSWORD`，未设置则随机生成并打印在启动日志里
 
 ## 测试
 
 ```bash
 cd blog/backend
-./mvnw test   # 48 个测试：控制器、服务、安全配置
+./mvnw test   # 60 个测试：控制器、服务、安全配置
 ```

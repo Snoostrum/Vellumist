@@ -25,3 +25,6 @@ blog/backend/uploads/
 
 # 本地笔记，含明文密码，不入库
 改动注意事项.txt
+
+# 本地给 Claude Code 的项目说明，不公开
+CLAUDE.md
