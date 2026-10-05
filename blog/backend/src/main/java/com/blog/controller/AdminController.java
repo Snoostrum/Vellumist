@@ -126,9 +126,9 @@ public class AdminController {
             @RequestParam("cover") MultipartFile cover,
             @RequestParam("songName") String songName,
             @RequestParam("artist") String artist) {
-        // 校验音频大小（≤20MB）
-        if (file.getSize() > 20 * 1024 * 1024) {
-            return ApiResponse.error(413, "音频不能超过 20MB");
+        // 校验音频大小（≤30MB，与 application.properties 的 multipart 限制保持一致）
+        if (file.getSize() > 30 * 1024 * 1024) {
+            return ApiResponse.error(413, "音频不能超过 30MB");
         }
         // 校验音频扩展名 + 文件头（Content-Type 客户端可伪造，不能作为唯一依据）
         String fileExt = getExtension(Objects.requireNonNull(file.getOriginalFilename())).toLowerCase();

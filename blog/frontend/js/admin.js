@@ -539,7 +539,7 @@ async function renderMusicTab() {
         <div class="article-form">
             <input type="text" id="music-name" placeholder="歌曲名称" />
             <input type="text" id="music-artist" placeholder="艺术家" />
-            <label style="color:var(--color-muted);font-size:0.85rem">音频文件 (mp3/wav/flac/ogg/m4a, ≤20MB)</label>
+            <label style="color:var(--color-muted);font-size:0.85rem">音频文件 (mp3/wav/flac/ogg/m4a, ≤30MB)</label>
             <input type="file" id="music-file" accept="audio/*" />
             <label style="color:var(--color-muted);font-size:0.85rem">封面图片 (jpg/png/gif/webp)</label>
             <input type="file" id="music-cover" accept="image/*" />
@@ -572,8 +572,8 @@ async function renderMusicTab() {
             status.textContent = '请填写歌曲名称并选择音频和封面';
             return;
         }
-        if (file.size > 20 * 1024 * 1024) {
-            status.textContent = '音频文件不能超过20MB';
+        if (file.size > 30 * 1024 * 1024) {
+            status.textContent = '音频文件不能超过30MB';
             return;
         }
 
