@@ -11,7 +11,10 @@ const API_BASE = (() => {
 
 async function fetchJSON(url, options = {}) {
     try {
-        const res = await fetch(url, options);
+        // credentials: 'include' 必须带上 —— 本地开发时前端在 8081、后端在 8080，
+        // 属于跨源请求；fetch 默认的 'same-origin' 会让浏览器直接丢弃后端下发的 Set-Cookie，
+        // 表现为登录接口返回 200 但后续请求全部 401。
+        const res = await fetch(url, { credentials: 'include', ...options });
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         return await res.json();
     } catch (err) {
